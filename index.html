@@ -9,34 +9,46 @@
 <body>
     <nav>
         <div id="logo">Spotify Stats</div>
-        <div id="user-info"></div>
+        <div id="user-info-container">
+            <span id="user-info"></span>
+            <button id="sign-out-button" style="display:none;">Sign Out</button>
+        </div>
     </nav>
+    
 
     <div id="login-container">
         <h1>Login to Spotify Stats</h1>
         <div id="interaction-container" style="display: none;">
+            <label for="stat-type">Stat Type:</label>
+            <select id="stat-type">
+                <option value="">Select Type</option>
+                <option value="tracks">Tracks</option>
+                <option value="artists">Artists</option>
+            </select>
             <label for="time-range">Time Range:</label>
             <select id="time-range">
-                <option value="">Select a time range</option>
+                <option value="">Select Time Range</option>
                 <option value="short_term">Last 4 weeks</option>
                 <option value="medium_term">Last 6 months</option>
-                <option value="long_term">Last 12 months</option>
+                <option value="long_term">Last 1 year</option>
             </select>
-        
-            <label for="track-limit">Number of Tracks:</label>
+            <label for="track-limit">Limit:</label>
             <select id="track-limit">
-                <option value="">Select number of tracks</option>
+                <option value="">Select Limit</option>
                 <option value="5">5</option>
                 <option value="10">10</option>
-                <option value="15">15</option>
+                <option value="20">20</option>
             </select>
-        
             <button id="submit-button" disabled>Submit</button>
         </div>
         <button id="login-button">Login with Spotify</button>
     </div>
-    
+        
     <div id="tracks-container" style="margin-top: 20px;"></div>
+
+    <footer style="text-align: center; margin-top: 40px; padding: 10px;">
+        Created by Tobin Tojo
+    </footer>
     
     <script type="module" src="script.js"></script>
 </body>

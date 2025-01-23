@@ -33,17 +33,21 @@ nav {
     cursor: pointer;
 }
 
-/* Styling for user info inside the navbar */
-#user-info {
-    font-size: 18px;
+/* Styling for the User Info and Sign Out Button container */
+#user-info-container {
     display: flex;
     align-items: center;
-    justify-content: center;
-    height: 100%; /* Match the navbar height */
+    gap: 10px; /* Space between username and button */
+    height: 100%; /* Match navbar height */
+}
+
+/* Styling for the user info (username) */
+#user-info {
+    font-size: 18px;
+    color: black; /* Updated text color */
     white-space: nowrap; /* Prevent text wrapping */
     overflow: hidden; /* Hide overflow if necessary */
     text-overflow: ellipsis; /* Add ellipsis for long text */
-    color: black; /* Updated text color */
 }
 
 /* Styling for the Sign Out Button */
@@ -55,7 +59,6 @@ nav {
     border: none;
     border-radius: 20px;
     cursor: pointer;
-    margin-left: 15px; /* Space between username and button */
     transition: background-color 0.3s, color 0.3s;
 }
 
@@ -230,12 +233,112 @@ select:focus {
     width: 100%; /* Ensure it spans the full width of the viewport */
 }
 
+/* General styling for each artist item */
+.artist-item {
+    display: flex;
+    align-items: center;
+    margin: 0 auto 15px; /* Center the item horizontally and add bottom margin */
+    padding: 10px;
+    width: 80%; /* Constrain the width to 80% of the parent container */
+    max-width: 600px; /* Set a maximum width for larger screens */
+    border: 1px solid #333; /* Dark border */
+    border-radius: 8px;
+    background-color: #181818; /* Spotify-like dark background */
+    color: #fff; /* White text for readability */
+}
+
+/* Styling for the artist number */
+.artist-number {
+    font-weight: bold;
+    margin-right: 15px;
+    font-size: 18px;
+    width: 30px;
+    text-align: center;
+    color: #1DB954; /* Spotify green for the artist number */
+}
+
+/* Styling for the artist image */
+.artist-image {
+    width: 64px;
+    height: 64px;
+    margin-right: 15px;
+    border-radius: 8px;
+}
+
+/* Styling for the artist information */
+.artist-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 16px;
+}
+
+/* Bold the artist name */
+.artist-info strong {
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: #fff; /* Bright white for the artist name */
+}
+
+/* Artist genres styling */
+.artist-info span {
+    font-size: 14px;
+    color: #b3b3b3; /* Spotify's gray for secondary text */
+}
+
+/* Add hover effect to the artist item */
+.artist-item:hover {
+    background-color: #282828; /* Slightly lighter dark background for hover */
+    border-color: #1DB954; /* Green border on hover */
+}
+
+a {
+    text-decoration: none;
+}
+
+/* Footer Styling */
+footer {
+    background-color: #191414; /* Spotify dark background */
+    color: #B3B3B3; /* Light gray text color */
+    padding: 20px;
+    font-size: 16px;
+    text-align: center;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    box-sizing: border-box; /* Ensure padding is included in the total width */
+}
+
+/* Hover effect for footer text */
+footer:hover {
+    color: #1DB954; /* Spotify green text on hover */
+    cursor: pointer; /* Indicate it's interactive */
+}
 
 
 /* Mobile responsiveness */
 @media (max-width: 600px) {
-    #interaction-container {
-        width: 80%; /* Increased width for small screens */
+
+    #logo {
+        display: none;
+    }
+
+         /* Align "Sign Out" button to the right */
+    #user-info-container {
+        justify-content: flex-end; /* Push content to the right */
+        width: 100%; /* Ensure it spans the entire width of the navbar */
+    }
+
+    #user-info {
+        margin-right: 10px; /* Add spacing between username and button */
+    }
+    #user-info {
+        font-size: 15px;
+    }
+
+    #sign-out-button {
+        padding: 7px 14px;
+        font-size: 15px;
     }
 
     .track {
