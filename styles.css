@@ -1,0 +1,263 @@
+/* Global Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #191414; /* Spotify dark background */
+    color: #fff;
+    text-align: center;
+}
+
+/* Styling for the Navbar */
+nav {
+    background-color: #1DB954; /* Spotify green */
+    color: black; /* Updated text color */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 30px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    height: 60px; /* Consistent height */
+    box-sizing: border-box; /* Include padding in height */
+}
+
+/* Spotify Logo */
+#logo {
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+/* Styling for user info inside the navbar */
+#user-info {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* Match the navbar height */
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden; /* Hide overflow if necessary */
+    text-overflow: ellipsis; /* Add ellipsis for long text */
+    color: black; /* Updated text color */
+}
+
+/* Styling for the Sign Out Button */
+#sign-out-button {
+    padding: 8px 15px;
+    font-size: 16px;
+    background-color: black; /* Updated background color */
+    color: white; /* Updated text color */
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-left: 15px; /* Space between username and button */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#sign-out-button:hover {
+    background-color: #333; /* Slightly lighter black for hover */
+    color: white; /* Keep text white on hover */
+}
+
+#sign-out-button:focus {
+    outline: none;
+}
+
+/* Styling for the Login Container */
+#login-container {
+    margin-top: 100px; /* Offset for the navbar */
+}
+
+/* Heading Style */
+h1 {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Button Styling */
+#login-button {
+    padding: 15px 30px;
+    font-size: 18px;
+    background-color: #1DB954; /* Spotify green */
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#login-button:hover {
+    background-color: #1ed760; /* Slightly lighter green for hover effect */
+}
+
+#login-button:focus {
+    outline: none;
+}
+
+/* Styling for interaction container (dropdowns and labels) */
+#interaction-container {
+    margin-top: 50px;
+    padding: 20px;
+    background-color: #121212; /* Dark background for the interaction area */
+    border-radius: 10px;
+    display: inline-block;
+    text-align: left;
+    width: 50%; /* Decreased width */
+    max-width: 400px; /* Optional: max width for large screens */
+    margin-left: auto; /* Centering the container */
+    margin-right: auto; /* Centering the container */
+}
+
+/* Styling for labels */
+label {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #B3B3B3; /* Light grey for labels */
+}
+
+/* Styling for dropdowns */
+select {
+    width: 100%; /* Dropdown width set to 100% of the container */
+    padding: 12px;
+    font-size: 16px;
+    margin-bottom: 20px; /* Space between dropdowns */
+    background-color: #333; /* Dark background for dropdowns */
+    color: #fff; /* White text color */
+    border: 1px solid #555;
+    border-radius: 8px;
+    outline: none;
+}
+
+select:focus {
+    border-color: #1DB954; /* Green border on focus */
+}
+
+/* Button for submitting selections */
+#submit-button {
+    padding: 12px 20px;
+    font-size: 18px;
+    background-color: #1DB954; /* Spotify green */
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+#submit-button:disabled {
+    background-color: #555; /* Grey when disabled */
+    cursor: not-allowed;
+}
+
+#submit-button:hover:not(:disabled) {
+    background-color: #1ed760; /* Slightly lighter green for hover */
+}
+
+
+/* General styling for each track item */
+.track-item {
+    display: flex;
+    align-items: center;
+    margin: 0 auto 15px; /* Center the item horizontally and add bottom margin */
+    padding: 10px;
+    width: 80%; /* Constrain the width to 80% of the parent container */
+    max-width: 600px; /* Set a maximum width for larger screens */
+    border: 1px solid #333; /* Dark border */
+    border-radius: 8px;
+    background-color: #181818; /* Spotify-like dark background */
+    color: #fff; /* White text for readability */
+}
+
+/* Styling for the track number */
+.track-number {
+    font-weight: bold;
+    margin-right: 15px;
+    font-size: 18px;
+    width: 30px;
+    text-align: center;
+    color: #1DB954; /* Spotify green for the track number */
+}
+
+/* Styling for the track image */
+.track-image {
+    width: 64px;
+    height: 64px;
+    margin-right: 15px;
+    border-radius: 8px;
+}
+
+/* Styling for the track information */
+.track-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 16px;
+}
+
+/* Bold the track name */
+.track-info strong {
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: #fff; /* Bright white for the track name */
+}
+
+/* Artist names styling */
+.track-info span {
+    font-size: 14px;
+    color: #b3b3b3; /* Spotify's gray for secondary text */
+}
+
+/* Add hover effect to the track item */
+.track-item:hover {
+    background-color: #282828; /* Slightly lighter dark background for hover */
+    border-color: #1DB954; /* Green border on hover */
+}
+
+/* Center the tracks container */
+#tracks-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    width: 100%; /* Ensure it spans the full width of the viewport */
+}
+
+
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+    #interaction-container {
+        width: 80%; /* Increased width for small screens */
+    }
+
+    .track {
+        height: 120px; /* Increase height for better display on small screens */
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .track-image {
+        width: 80px; /* Slightly larger image for mobile */
+        height: 80px; /* Slightly larger image for mobile */
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .track-info {
+        width: 100%;
+    }
+    
+    .track-number {
+        width: 40px;
+        margin-bottom: 10px; /* Space for smaller layout */
+    }
+}
+
