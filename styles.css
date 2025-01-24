@@ -292,6 +292,117 @@ select:focus {
     border-color: #1DB954; /* Green border on hover */
 }
 
+/* Gold Text for Top 1 */
+.text-gold {
+    color: gold;
+}
+
+/* Silver Text for Top 2 */
+.text-silver {
+    color: silver;
+}
+
+/* Bronze Text for Top 3 */
+.text-bronze {
+    color: #cd7f32; /* Bronze */
+}
+
+/* Track Top 1 */
+.track-top1 {
+    background-color: #2a2a2a; /* Lighter shade of default */
+    border: 2px solid gold;
+    box-shadow: 0 0 10px gold;
+    color: gold;
+    font-weight: bold;
+}
+
+/* Track Top 2 */
+.track-top2 {
+    background-color: #2a2a2a;
+    border: 2px solid silver;
+    box-shadow: 0 0 10px silver;
+    color: silver;
+    font-weight: bold;
+}
+
+/* Track Top 3 */
+.track-top3 {
+    background-color: #2a2a2a;
+    border: 2px solid #cd7f32; /* Bronze */
+    box-shadow: 0 0 10px #cd7f32;
+    color: #cd7f32;
+    font-weight: bold;
+}
+
+/* Hover Effects for Top Tracks */
+.track-top1:hover {
+    transform: scale(1.15);
+    border: 2px solid gold;
+    box-shadow: 0 0 15px 10px rgba(255, 215, 0, 0.8); /* Softer gold glow */
+}
+
+.track-top2:hover {
+    transform: scale(1.15);
+    border: 2px solid silver;
+    box-shadow: 0 0 15px 10px rgba(192, 192, 192, 0.8); /* Softer silver glow */
+}
+
+.track-top3:hover {
+    transform: scale(1.15);
+    border: 2px solid #cd7f32; /* Bronze */
+    box-shadow: 0 0 15px 10px rgba(205, 127, 50, 0.8); /* Softer bronze glow */
+}
+
+/* Default Hover Effect for tracks */
+.track-default:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 10px 5px #1db954; /* Spotify green glow */
+}
+
+
+.text-gold {
+    color: gold !important;
+}
+
+.text-silver {
+    color: silver !important;
+}
+
+.text-bronze {
+    color: #cd7f32 !important;
+}
+
+/* Styling for the track rank label */
+.track-rank {
+    font-size: 16px;
+    color: #b3b3b3; /* Gray for rank text */
+    margin-right: 10px; /* Space between rank and content */
+    font-weight: bold;
+}
+
+/* Styling for tracks based on rank */
+.rank-label-1 {
+    color: gold; /* Gold text for rank 1 */
+}
+
+.rank-label-2 {
+    color: silver; /* Silver text for rank 2 */
+}
+
+.rank-label-3 {
+    color: #cd7f32; /* Bronze text for rank 3 */
+}
+
+/* Hover effects for all tracks */
+.track-item:hover {
+    background-color: #282828; /* Slightly lighter dark background for hover */
+    border-color: #1DB954; /* Green border on hover */
+    transform: scale(1.10); /* Subtle hover scale */
+    box-shadow: 0 0 10px 5px rgba(29, 185, 84, 0.5); /* Green glow */
+}
+
+
+
 a {
     text-decoration: none;
 }
@@ -316,9 +427,62 @@ footer:hover {
 }
 
 
+.artist-top1 {
+    background-color: #2a2a2a; /* Lighter shade of default */
+    border: 2px solid gold;
+    box-shadow: 0 0 10px gold;
+    color: gold;
+    font-weight: bold;
+  }
+  
+  .artist-top2 {
+    background-color: #2a2a2a;
+    border: 2px solid silver;
+    box-shadow: 0 0 10px silver;
+    color: silver;
+    font-weight: bold;
+  }
+  
+  .artist-top3 {
+    background-color: #2a2a2a;
+    border: 2px solid #cd7f32; /* Bronze */
+    box-shadow: 0 0 10px #cd7f32;
+    color: #cd7f32;
+    font-weight: bold;
+  }
+  
+ /* Hover effect for artist-top1 */
+.artist-top1:hover {
+    transform: scale(1.15); /* Increase scale slightly */
+    box-shadow: 0 0 15px 10px rgba(255, 215, 0, 0.8); /* Softer gold glow */
+}
+
+/* Hover effect for artist-top2 */
+.artist-top2:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 15px 10px rgba(192, 192, 192, 0.8); /* Softer silver glow */
+}
+
+/* Hover effect for artist-top3 */
+.artist-top3:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 15px 10px rgba(205, 127, 50, 0.8); /* Softer bronze glow */
+}
+
+/* Default artist hover effect */
+.artist-item:not(.artist-top1):not(.artist-top2):not(.artist-top3):hover {
+    transform: scale(1.1); /* Subtle scale for default artists */
+    box-shadow: 0 0 15px 5px rgba(29, 185, 84, 0.7); /* Softer green glow */
+}
+
+  
+
+
 /* Mobile responsiveness */
 @media (max-width: 600px) {
-
+    #login-container h1, #interaction-container h1 {
+        font-size: 23px;
+    }
     #logo {
         display: none;
     }
@@ -339,7 +503,7 @@ footer:hover {
     #sign-out-button {
         padding: 7px 14px;
         font-size: 15px;
-    }
+    } 
 
     .track {
         height: 120px; /* Increase height for better display on small screens */
@@ -363,4 +527,3 @@ footer:hover {
         margin-bottom: 10px; /* Space for smaller layout */
     }
 }
-
