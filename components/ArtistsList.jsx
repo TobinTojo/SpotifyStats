@@ -38,6 +38,7 @@ const ArtistsList = ({ artists }) => {
 
   return (
     <div id="artists-container">
+      <h2>Leaderboard</h2>
       {artists.map((artist, index) => (
         <a
           key={artist.id}

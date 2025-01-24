@@ -27,7 +27,7 @@ const InteractionForm = ({
         <option value="medium_term">Last 6 months</option>
         <option value="long_term">Last 1 year</option>
       </select>
-      <label htmlFor="track-limit">Limit:</label>
+      <label htmlFor="track-limit">Limit (Number of Artists/Tracks):</label>
       <select id="track-limit" value={trackLimit} onChange={(e) => setTrackLimit(e.target.value)}>
         <option value="">Select Limit</option>
         <option value="5">5</option>

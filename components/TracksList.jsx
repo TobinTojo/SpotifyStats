@@ -38,6 +38,7 @@ const TracksList = ({ tracks }) => {
 
   return (
     <div id="tracks-container">
+      <h2>Leaderboard</h2>
       {tracks.map((track, index) => (
         <a
           key={track.id}
