@@ -52,7 +52,7 @@ const TracksList = ({ tracks }) => {
             className="track-number"
             style={{ color: getStyle(index).color, fontWeight: getFontWeight(index) }}
           >
-            {index + 1}.
+            {index + 1}. {/* Display rank */}
           </div>
           <img
             className="track-image"

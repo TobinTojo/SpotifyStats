@@ -1,6 +1,6 @@
 import React from "react";
 
-const ArtistsList = ({ artists }) => {
+const ArtistsList = ({ artists, onArtistClick }) => {
   if (!artists || artists.length === 0) {
     return <div>No artists to display. Please submit your selection.</div>;
   }
@@ -10,7 +10,7 @@ const ArtistsList = ({ artists }) => {
     if (index === 0) {
       return {
         color: "gold",
-        backgroundColor: "#2a2a2a", // Lighter shade of default (#181818)
+        backgroundColor: "#2a2a2a",
         border: "2px solid gold",
         boxShadow: "0 0 10px gold",
       };
@@ -18,20 +18,20 @@ const ArtistsList = ({ artists }) => {
     if (index === 1) {
       return {
         color: "silver",
-        backgroundColor: "#2a2a2a", // Lighter shade of default (#181818)
+        backgroundColor: "#2a2a2a",
         border: "2px solid silver",
         boxShadow: "0 0 10px silver",
       };
     }
     if (index === 2) {
       return {
-        color: "#cd7f32", // Bronze
-        backgroundColor: "#2a2a2a", // Lighter shade of default (#181818)
+        color: "#cd7f32",
+        backgroundColor: "#2a2a2a",
         border: "2px solid #cd7f32",
         boxShadow: "0 0 10px #cd7f32",
       };
     }
-    return { backgroundColor: "#181818" }; // Default for others
+    return { backgroundColor: "#181818" };
   };
 
   const getFontWeight = (index) => (index < 3 ? "bold" : "normal");
@@ -40,13 +40,11 @@ const ArtistsList = ({ artists }) => {
     <div id="artists-container">
       <h2>Leaderboard</h2>
       {artists.map((artist, index) => (
-        <a
+        <div
           key={artist.id}
-          href={artist.external_urls.spotify}
-          target="_blank"
-          rel="noopener noreferrer"
           className="artist-item"
           style={getStyle(index)}
+          onClick={() => onArtistClick(artist)} // Trigger click event handler
         >
           <div
             className="artist-number"
@@ -70,11 +68,12 @@ const ArtistsList = ({ artists }) => {
             <br />
             <span>Popularity: {artist.popularity}</span>
           </div>
-        </a>
+        </div>
       ))}
     </div>
   );
 };
 
 export default ArtistsList;
+
 
