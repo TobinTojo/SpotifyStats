@@ -508,13 +508,42 @@ footer:hover {
     cursor: pointer;
     border-radius: 5px;
     font-size: 16px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
   }
   
+  .popup-artist-img {
+    margin-bottom: 10px;
+  }
+
   .close-popup:hover {
     background-color: #cc0000;
   }
   
-
+  .artist-spotify-button {
+    background-color: #1db954;
+    color: white;
+    border: none;
+    padding: 7px 20px;
+    border-radius: 5px;
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Vertically align items */
+    justify-content: center; /* Optionally center content horizontally */
+    margin-left: auto; /* Center the button horizontally */
+    margin-right: auto; /* Center the button horizontally */
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+  
+  
+  .artist-spotify-button:hover {
+    background-color: #1ed760;
+  }
+  
+  
 
 /* Mobile responsiveness */
 @media (max-width: 600px) {

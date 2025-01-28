@@ -14,9 +14,76 @@ const App = () => {
   const [timeRange, setTimeRange] = useState("");
   const [trackLimit, setTrackLimit] = useState("");
   const [data, setData] = useState([]);
-  const [popupTracks, setPopupTracks] = useState(null); // Track for popup data
+  const [popupTracks, setPopupTracks] = useState(null); // Tracks for popup data (past 4 weeks)
+  const [popupTracksSixMonths, setPopupTracksSixMonths] = useState(null); // Tracks for 6 months
+  const [popupTracksYear, setPopupTracksYear] = useState(null); // Tracks for past year
   const [selectedArtist, setSelectedArtist] = useState(null); // Selected artist for the popup
-  const [topTracks, setTopTracks] = useState([]); // Stores the top 50 tracks
+  const [topTracks, setTopTracks] = useState([]); // Stores the top 50 tracks (past 4 weeks)
+  const [topTracksSixMonths, setTopTracksSixMonths] = useState([]); // Stores the top 50 tracks for 6 months
+  const [topTracksYear, setTopTracksYear] = useState([]); // Stores the top 50 tracks for the past year
+  const [selectedTimeRange, setSelectedTimeRange] = useState("short_term"); // Default to Past 4 Weeks
+  const [artistImage, setArtistImage] = useState(null); // State to hold the artist's image
+  const [artistSpotifyLink, setArtistSpotifyLink] = useState(null); // State to hold the artist's Spotify link
+
+    const fetchArtistDetails = async (artistId) => {
+      try {
+        const response = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        const artistDetails = await response.json();
+        return artistDetails; // This will contain artist details including their Spotify link
+      } catch (error) {
+        console.error("Failed to fetch artist details:", error);
+      }
+    };
+
+  // Update time range when the dropdown value changes
+  const handleTimeRangeChange = (e) => {
+    const selectedRange = e.target.value;
+    setSelectedTimeRange(selectedRange);
+  };
+
+  // Auto-select the first valid time range on popup open
+useEffect(() => {
+  if (popupTracks || popupTracksSixMonths || popupTracksYear) {
+    const { default: defaultRange } = getAvailableTimeRanges();
+    if (defaultRange) {
+      setSelectedTimeRange(defaultRange);
+    }
+  }
+}, [popupTracks, popupTracksSixMonths, popupTracksYear]);
+
+  const getFilteredTracks = () => {
+    switch (selectedTimeRange) {
+      case "short_term":
+        return popupTracks; // Past 4 weeks
+      case "medium_term":
+        return popupTracksSixMonths; // Past 6 months
+      case "long_term":
+        return popupTracksYear; // Past Year
+      default:
+        return [];
+    }
+  };
+
+  // Helper function to check available time ranges
+const getAvailableTimeRanges = () => {
+  const ranges = [
+    { value: "short_term", tracks: popupTracks },
+    { value: "medium_term", tracks: popupTracksSixMonths },
+    { value: "long_term", tracks: popupTracksYear },
+  ];
+
+ // Filter valid ranges
+ const validRanges = ranges.filter((range) => range.tracks && range.tracks.length > 0);
+
+ return {
+   available: validRanges.map((range) => range.value), // List of enabled ranges
+   default: validRanges.length > 0 ? validRanges[0].value : null, // First available range
+ };
+};
+  
+
 
   const getAccessTokenFromUrl = () => {
     const hash = window.location.hash;
@@ -87,7 +154,7 @@ const App = () => {
     setData([]); // Clear data when statType changes
   }, [statType]);
 
-  // Fetch top 50 tracks
+  // Fetch top 50 tracks for past 4 weeks
   const fetchTopTracks = async () => {
     try {
       const topTracksUrl = `https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=50`;
@@ -95,7 +162,7 @@ const App = () => {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       const result = await response.json();
-      setTopTracks(result.items); // Store top 50 tracks
+      setTopTracks(result.items); // Store top 50 tracks for past 4 weeks
     } catch (error) {
       console.error("Failed to fetch top tracks:", error);
     }
@@ -107,27 +174,69 @@ const App = () => {
     }
   }, [accessToken]);
 
+  // Fetch top 50 tracks from the last 6 months
+  const fetchTopTracksLastSixMonths = async (artistId, artistName) => {
+    try {
+      const topTracksUrl = `https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=50`;
+      const response = await fetch(topTracksUrl, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const result = await response.json();
+      const tracksByArtist = result.items.filter((track) =>
+        track.artists.some((artist) => artist.id === artistId)
+      );
+      setTopTracksSixMonths(result.items); // Store all 6-month tracks
+      setPopupTracksSixMonths(tracksByArtist); // Store the tracks for the last 6 months filtered by artist
+    } catch (error) {
+      console.error("Failed to fetch top tracks from the last 6 months:", error);
+    }
+  };
+
+  // Fetch top 50 tracks from the past year
+  const fetchTopTracksYear = async (artistId, artistName) => {
+    try {
+      const topTracksUrl = `https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=50`;
+      const response = await fetch(topTracksUrl, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const result = await response.json();
+      const tracksByArtist = result.items.filter((track) =>
+        track.artists.some((artist) => artist.id === artistId)
+      );
+      setTopTracksYear(result.items); // Store all year tracks
+      setPopupTracksYear(tracksByArtist); // Store the tracks for the past year filtered by artist
+    } catch (error) {
+      console.error("Failed to fetch top tracks from the past year:", error);
+    }
+  };
+
   const fetchArtistTopTracks = (artistId, artistName) => {
-    // Filter tracks for the selected artist from the top 50 tracks
     const tracksByArtist = topTracks.filter((track) =>
       track.artists.some((artist) => artist.id === artistId)
     );
-
-    // Set the artist name and tracks for the popup
     setPopupTracks(tracksByArtist);
     setSelectedArtist(artistName);
+    fetchTopTracksLastSixMonths(artistId, artistName);
+    fetchTopTracksYear(artistId, artistName);
   };
 
-  const handleArtistClick = (artist) => {
-    fetchArtistTopTracks(artist.id, artist.name); // Fetch the tracks for this artist
-  };
+  const handleArtistClick = async (artist) => {
+    setSelectedArtist(artist.name); // Set the selected artist's name
+    const artistDetails = await fetchArtistDetails(artist.id);
+    setArtistImage(artistDetails.images?.[0]?.url); // Store the artist's image
+    setArtistSpotifyLink(artistDetails.external_urls.spotify); // Store the Spotify link
+    fetchArtistTopTracks(artist.id, artist.name); // Fetch the top tracks for the selected artist
+};
 
   const closePopup = () => {
     setPopupTracks(null); // Close the popup
+    setPopupTracksSixMonths(null); // Reset tracks for the last 6 months
+    setPopupTracksYear(null); // Reset tracks for the past year
     setSelectedArtist(null); // Reset selected artist
+    setSelectedTimeRange("short_term"); // Reset the time range to "Past 4 Weeks"
   };
+  
 
-  // Function to determine the style for the top 3 tracks in the popup based on their order
   const getTrackStyle = (index) => {
     let trackStyle = { backgroundColor: "#181818" }; // Default background color
     let nameStyle = {}; // Track name style
@@ -139,7 +248,7 @@ const App = () => {
         border: "2px solid gold",
         boxShadow: "0 0 10px gold",
       };
-      nameStyle = { color: "gold" }; // Set the track name color to gold
+      nameStyle = { color: "gold" };
     }
     if (index === 1) {
       trackStyle = {
@@ -148,7 +257,7 @@ const App = () => {
         border: "2px solid silver",
         boxShadow: "0 0 10px silver",
       };
-      nameStyle = { color: "silver" }; // Set the track name color to silver
+      nameStyle = { color: "silver" };
     }
     if (index === 2) {
       trackStyle = {
@@ -157,7 +266,7 @@ const App = () => {
         border: "2px solid #cd7f32",
         boxShadow: "0 0 10px #cd7f32",
       };
-      nameStyle = { color: "#cd7f32" }; // Set the track name color to bronze
+      nameStyle = { color: "#cd7f32" };
     }
 
     return { trackStyle, nameStyle }; // Return both track and name styles
@@ -172,7 +281,7 @@ const App = () => {
         <div>
           <InteractionForm
             statType={statType}
-            setStatType={handleStatTypeChange} // Pass the new function
+            setStatType={handleStatTypeChange}
             timeRange={timeRange}
             setTimeRange={setTimeRange}
             trackLimit={trackLimit}
@@ -188,44 +297,129 @@ const App = () => {
       )}
       <Footer />
 
-      {/* Popup to display top tracks for the selected artist */}
-      {popupTracks !== null && (
+{/* Popup to display top tracks for the selected artist */}
+{(popupTracks !== null || popupTracksSixMonths !== null || popupTracksYear !== null) && (
         <div className="popup-overlay">
           <div className="popup-content">
-            <button className="close-popup" onClick={closePopup}>
+
+          <button className="close-popup" onClick={closePopup}>
               Close
+          </button>
+
+            {/* Artist's Title */}
+            <h1>{selectedArtist}</h1>
+
+            {/* Artist's Image */}
+            <img
+              class="popup-artist-img"
+              src={artistImage}
+              alt={selectedArtist}
+              style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+            />
+
+            {/* Button to go to the artist's Spotify page */}
+            <button
+              className="artist-spotify-button"
+              onClick={() => window.open(artistSpotifyLink, "_blank")}
+            >
+              <img 
+                src="./spotify_512_black.png" 
+                alt="Spotify Icon" 
+                style={{ width: "28px", marginRight: "8px" }} 
+              />
+              Visit Artist on Spotify
             </button>
-            {popupTracks.length === 0 ? (
-              <p>No tracks by {selectedArtist} in the top 50 from the last 4 weeks</p>
+            
+            {/* Dropdown for selecting time range */}
+            <div>
+              <label htmlFor="time-range-select">Filter by Time Range: </label>
+              <select
+                id="time-range-select"
+                value={selectedTimeRange}
+                onChange={handleTimeRangeChange}
+              >
+                <option value="short_term" disabled={!popupTracks || popupTracks.length === 0}>
+                  Past 4 Weeks
+                </option>
+                <option
+                  value="medium_term"
+                  disabled={!popupTracksSixMonths || popupTracksSixMonths.length === 0}
+                >
+                  Past 6 Months
+                </option>
+                <option
+                  value="long_term"
+                  disabled={!popupTracksYear || popupTracksYear.length === 0}
+                >
+                  Past Year
+                </option>
+              </select>
+            </div>;
+
+            {/* Check if no tracks in any of the time periods */}
+            {(
+              (popupTracks && popupTracks.length === 0) &&
+              (popupTracksSixMonths && popupTracksSixMonths.length === 0) &&
+              (popupTracksYear && popupTracksYear.length === 0)
+            ) ? (
+              <p>No tracks by {selectedArtist} in the top 50 from the past 4 weeks, 6 months, or the past year</p>
             ) : (
               <>
                 <h3>Your Top Tracks Featuring {selectedArtist}</h3>
-                <div id="tracks-container">
-                  {popupTracks.map((track, index) => {
-                    // Get the styles based on the order of tracks in the popup (index)
-                    const { trackStyle, nameStyle } = getTrackStyle(index);
 
-                    return (
-                      <div key={track.id} className="track-item" style={trackStyle}>
-                        <div className="track-number" style={{ color: trackStyle.color }}>
-                          {topTracks.findIndex((t) => t.id === track.id) + 1}. {/* Actual rank */}
-                        </div>
-                        <img
-                          src={track.album.images?.[2]?.url || track.album.images?.[0]?.url}
-                          alt={track.name}
-                          className="track-image"
-                        />
-                        <div className="track-info">
-                          <strong style={nameStyle}>{track.name}</strong> {/* Apply nameStyle */}
-                          <br />
-                          <span>by {track.artists.map((artist) => artist.name).join(", ")}</span>
-                          <br />
-                          <span>Popularity: {track.popularity}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                {/* Display filtered tracks based on selected time range */}
+                <div id="tracks-container">
+  {getFilteredTracks().map((track, index) => {
+    const { trackStyle, nameStyle } = getTrackStyle(index);
+    let trackRank = 0;
+
+    // Calculate the rank based on the selected time range
+    switch (selectedTimeRange) {
+      case "short_term":
+        trackRank = topTracks.findIndex((t) => t.id === track.id) + 1;
+        break;
+      case "medium_term":
+        trackRank = topTracksSixMonths.findIndex((t) => t.id === track.id) + 1;
+        break;
+      case "long_term":
+        trackRank = topTracksYear.findIndex((t) => t.id === track.id) + 1;
+        break;
+      default:
+        trackRank = index + 1; // Default to index if no match
+    }
+
+    const handleTrackClick = () => {
+      // Redirect to the track's Spotify page
+      window.open(track.external_urls.spotify, "_blank");
+    };
+
+    return (
+      <div
+        key={track.id}
+        className="track-item"
+        style={trackStyle}
+        onClick={handleTrackClick} // Add onClick event
+      >
+        <div className="track-number" style={{ color: trackStyle.color }}>
+          {trackRank}.
+        </div>
+        <img
+          src={track.album.images?.[2]?.url || track.album.images?.[0]?.url}
+          alt={track.name}
+          className="track-image"
+        />
+        <div className="track-info">
+          <strong style={nameStyle}>{track.name}</strong>
+          <br />
+          <span>by {track.artists.map((artist) => artist.name).join(", ")}</span>
+          <br />
+          <span>Popularity: {track.popularity}</span>
+        </div>
+      </div>
+    );
+  })}
+</div>
+
               </>
             )}
           </div>
