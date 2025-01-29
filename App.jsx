@@ -228,13 +228,22 @@ const getAvailableTimeRanges = () => {
     fetchArtistTopTracks(artist.id, artist.name); // Fetch the top tracks for the selected artist
 };
 
-  const closePopup = () => {
-    setPopupTracks(null); // Close the popup
-    setPopupTracksSixMonths(null); // Reset tracks for the last 6 months
-    setPopupTracksYear(null); // Reset tracks for the past year
-    setSelectedArtist(null); // Reset selected artist
-    setSelectedTimeRange("short_term"); // Reset the time range to "Past 4 Weeks"
-  };
+const closePopup = () => {
+  const overlay = document.querySelector('.popup-overlay');
+  const content = document.querySelector('.popup-content');
+  
+  if (overlay && content) {
+      overlay.classList.add('closing');
+      content.classList.add('closing');
+      setTimeout(() => {
+          setPopupTracks(null);
+          setPopupTracksSixMonths(null);
+          setPopupTracksYear(null);
+          setSelectedArtist(null);
+          setSelectedTimeRange("short_term");
+      }, 300);
+  }
+};
   
 
   const getTrackStyle = (index) => {
@@ -302,8 +311,12 @@ const getAvailableTimeRanges = () => {
         <div className="popup-overlay">
           <div className="popup-content">
 
-          <button className="close-popup" onClick={closePopup}>
-              Close
+          <button 
+            className="close-popup" 
+            onClick={closePopup}
+            aria-label="Close"
+          >
+            {/* Text content removed - using CSS pseudo-elements */}
           </button>
 
             {/* Artist's Title */}
@@ -354,7 +367,7 @@ const getAvailableTimeRanges = () => {
                   Past Year
                 </option>
               </select>
-            </div>;
+            </div>
 
             {/* Check if no tracks in any of the time periods */}
             {(

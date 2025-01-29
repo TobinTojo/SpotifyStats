@@ -2,7 +2,7 @@ import React from "react";
 
 const Navbar = ({ userProfile, onLogout }) => {
   return (
-    <nav>
+    <nav className={userProfile ? "logged-in" : ""}>
       <div id="logo">Spotify Stats</div>
       <div id="user-info-container">
         {userProfile ? (
