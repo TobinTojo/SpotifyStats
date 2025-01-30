@@ -5,7 +5,11 @@ import InteractionForm from "./components/InteractionForm";
 import TracksList from "./components/TracksList";
 import ArtistsList from "./components/ArtistsList";
 import Footer from "./components/Footer";
-import "./styles.css";
+import "./styles/styles.css";
+import "./styles/login.css";
+import "./styles/interactionform.css";
+import "./styles/liststyles.css";
+import "./styles/popup.css";
 
 const App = () => {
   const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken") || null);
@@ -24,7 +28,8 @@ const App = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState("short_term"); // Default to Past 4 Weeks
   const [artistImage, setArtistImage] = useState(null); // State to hold the artist's image
   const [artistSpotifyLink, setArtistSpotifyLink] = useState(null); // State to hold the artist's Spotify link
-
+  const [artistGenres, setArtistGenres] = useState([]); // Add this with other state declarations
+  
     const fetchArtistDetails = async (artistId) => {
       try {
         const response = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
@@ -221,12 +226,13 @@ const getAvailableTimeRanges = () => {
   };
 
   const handleArtistClick = async (artist) => {
-    setSelectedArtist(artist.name); // Set the selected artist's name
+    setSelectedArtist(artist.name);
     const artistDetails = await fetchArtistDetails(artist.id);
-    setArtistImage(artistDetails.images?.[0]?.url); // Store the artist's image
-    setArtistSpotifyLink(artistDetails.external_urls.spotify); // Store the Spotify link
-    fetchArtistTopTracks(artist.id, artist.name); // Fetch the top tracks for the selected artist
-};
+    setArtistImage(artistDetails.images?.[0]?.url);
+    setArtistSpotifyLink(artistDetails.external_urls.spotify);
+    setArtistGenres(artistDetails.genres || []); // Add this line
+    fetchArtistTopTracks(artist.id, artist.name);
+  };
 
 const closePopup = () => {
   const overlay = document.querySelector('.popup-overlay');
@@ -236,11 +242,12 @@ const closePopup = () => {
       overlay.classList.add('closing');
       content.classList.add('closing');
       setTimeout(() => {
-          setPopupTracks(null);
-          setPopupTracksSixMonths(null);
-          setPopupTracksYear(null);
-          setSelectedArtist(null);
-          setSelectedTimeRange("short_term");
+        setPopupTracks(null);
+        setPopupTracksSixMonths(null);
+        setPopupTracksYear(null);
+        setSelectedArtist(null);
+        setArtistGenres([]); // Add this line
+        setSelectedTimeRange("short_term");
       }, 300);
   }
 };
@@ -330,6 +337,13 @@ const closePopup = () => {
               style={{ width: '100px', height: '100px', objectFit: 'cover' }}
             />
 
+          <div className="genre-section">
+            <strong>Genres: </strong>
+            {artistGenres.length > 0 
+              ? artistGenres.join(", ") 
+              : "Not Provided By Spotify"}
+          </div>
+
             {/* Button to go to the artist's Spotify page */}
             <button
               className="artist-spotify-button"
@@ -382,6 +396,10 @@ const closePopup = () => {
 
                 {/* Display filtered tracks based on selected time range */}
                 <div id="tracks-container">
+                  <div className="click-hint">
+                    Click any track to listen on Spotify
+                    <span className="pulsating-arrow">→</span>
+                  </div>
   {getFilteredTracks().map((track, index) => {
     const { trackStyle, nameStyle } = getTrackStyle(index);
     let trackRank = 0;
@@ -427,6 +445,18 @@ const closePopup = () => {
           <span>by {track.artists.map((artist) => artist.name).join(", ")}</span>
           <br />
           <span>Popularity: {track.popularity}</span>
+        </div>
+        <div className="click-indicator">
+          <svg 
+            width="24" 
+            height="24" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2"
+          >
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
         </div>
       </div>
     );

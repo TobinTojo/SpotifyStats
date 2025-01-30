@@ -2,7 +2,7 @@ import React from "react";
 
 const Login = () => {
   const clientId = import.meta.env.VITE_SPOTIFY_API_KEY;
-  const redirectUri = "https://statspotify.netlify.app";
+  const redirectUri = "http://localhost:5173";
   const scopes = [
     "user-read-private",
     "user-read-email",
@@ -19,7 +19,7 @@ const Login = () => {
     <div id="login-container">
       <div className="login-header">
         <img src="./spotify_512_black.png" alt="Spotify Logo" className="spotify-logo" />
-        <h1>Spotify Stats Explorer</h1>
+        <h1>Statify</h1>
         <p className="subtitle">Discover your music journey</p>
       </div>
 

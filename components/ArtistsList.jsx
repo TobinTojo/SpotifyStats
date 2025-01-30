@@ -39,6 +39,10 @@ const ArtistsList = ({ artists, onArtistClick }) => {
   return (
     <div id="artists-container">
       <h2>Leaderboard</h2>
+      <div className="click-hint">
+        Click any artist to view their advanced stats
+        <span className="pulsating-arrow">→</span>
+      </div>
       {artists.map((artist, index) => (
         <div
           key={artist.id}
@@ -67,6 +71,19 @@ const ArtistsList = ({ artists, onArtistClick }) => {
             <span>Followers: {artist.followers.total.toLocaleString()}</span>
             <br />
             <span>Popularity: {artist.popularity}</span>
+          </div>
+           {/* Add click indicator */}
+           <div className="click-indicator">
+            <svg 
+              width="24" 
+              height="24" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2"
+            >
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
           </div>
         </div>
       ))}

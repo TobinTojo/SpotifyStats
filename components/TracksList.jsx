@@ -39,6 +39,10 @@ const TracksList = ({ tracks }) => {
   return (
     <div id="tracks-container">
       <h2>Leaderboard</h2>
+      <div className="click-hint">
+        Click any track to listen on Spotify
+        <span className="pulsating-arrow">→</span>
+      </div>
       {tracks.map((track, index) => (
         <a
           key={track.id}
@@ -69,6 +73,19 @@ const TracksList = ({ tracks }) => {
             <span>by {track.artists.map((artist) => artist.name).join(", ")}</span>
             <br />
             <span>Popularity: {track.popularity}</span>
+          </div>
+          {/* Add click indicator */}
+          <div className="click-indicator">
+            <svg 
+              width="24" 
+              height="24" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2"
+            >
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
           </div>
         </a>
       ))}

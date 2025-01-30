@@ -1,0 +1,146 @@
+/* login.css */
+/* Styling for the Login Container */
+#login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Header Styling */
+.login-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    z-index: 1;
+}
+
+.spotify-logo {
+    margin-top: 100px;
+    width: 80px;
+    margin-bottom: 1.5rem;
+    filter: brightness(0) invert(1);
+}
+
+.subtitle {
+    color: #b3b3b3;
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+}
+
+/* Feature Cards */
+.feature-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+    max-width: 800px;
+    z-index: 1;
+}
+
+.feature-card {
+    background: rgba(40, 40, 40, 0.8);
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    backdrop-filter: blur(5px);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.music-note {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.button-logo {
+    width: 28px;
+    height: 28px;
+    filter: brightness(0) invert(1);
+}
+
+/* Animated Background */
+.animated-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.floating-note {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.1;
+    animation: float 15s infinite linear;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+    }
+    100% {
+        transform: translateY(-100vh) rotate(360deg);
+    }
+}
+
+/* Generate random positions for notes */
+.floating-note:nth-child(1) { left: 5%; animation-delay: 0s; }
+.floating-note:nth-child(2) { left: 15%; animation-delay: 2s; }
+/* Add similar rules for other notes... */
+
+/* Login CTA Section */
+.login-cta {
+    text-align: center;
+    z-index: 1;
+    margin-top: 2rem;
+}
+
+.disclaimer {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+/* Button Styling */
+#login-button {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 1.2rem 2.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-size: 18px;
+    background-color: #1DB954; /* Spotify green */
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#login-button:hover {
+    background-color: #1ed760; /* Slightly lighter green for hover effect */
+}
+
+#login-button {
+    /* Add to existing styles */
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+#login-button:focus {
+    outline: none;
+}

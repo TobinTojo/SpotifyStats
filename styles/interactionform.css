@@ -1,0 +1,119 @@
+/* interactionForm.css */
+/* Styling for interaction container (dropdowns and labels) */
+#interaction-container {
+    margin-top: 50px;
+    padding: 20px;
+    background-color: #121212; /* Dark background for the interaction area */
+    border-radius: 10px;
+    display: inline-block;
+    text-align: left;
+    width: 50%; /* Decreased width */
+    max-width: 400px; /* Optional: max width for large screens */
+    margin-left: auto; /* Centering the container */
+    margin-right: auto; /* Centering the container */
+}
+
+/* Styling for labels */
+label {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #B3B3B3; /* Light grey for labels */
+}
+
+/* Styling for dropdowns */
+select {
+    width: 100%; /* Dropdown width set to 100% of the container */
+    padding: 12px;
+    font-size: 16px;
+    margin-bottom: 20px; /* Space between dropdowns */
+    background-color: #333; /* Dark background for dropdowns */
+    color: #fff; /* White text color */
+    border: 1px solid #555;
+    border-radius: 8px;
+    outline: none;
+}
+
+/* Dropdown animations */
+select {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+    cursor: pointer;
+}
+
+select:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
+    border-color: #1DB954;
+}
+
+select option {
+    background: #333;
+    padding: 10px;
+}
+
+/* Button for submitting selections */
+#submit-button {
+    padding: 12px 20px;
+    font-size: 18px;
+    background-color: #1DB954; /* Spotify green */
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+#submit-button:disabled {
+    background-color: #555; /* Grey when disabled */
+    cursor: not-allowed;
+}
+
+#submit-button:hover:not(:disabled) {
+    background-color: #1ed760; /* Slightly lighter green for hover */
+}
+
+#submit-button, #sign-out-button, .artist-spotify-button {
+    /* Add to existing styles */
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+#submit-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(29, 185, 84, 0.4);
+}
+
+/* Ripple effect */
+#submit-button:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#submit-button:active:after {
+    animation: ripple 0.6s ease-out;
+}
+
+/* Update existing ripple animation */
+@keyframes ripple {
+    0% { 
+        width: 0; 
+        height: 0; 
+        opacity: 0.5; 
+    }
+    100% { 
+        width: 200px; 
+        height: 200px; 
+        opacity: 0; 
+    }
+}
