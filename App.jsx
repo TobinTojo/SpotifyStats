@@ -398,58 +398,58 @@ const closePopup = () => {
           </div>
 
           <div className="artist-ranks">
-  <div className="rank-card">
-    <div className="rank-header">4 Week Rank</div>
-    <div className={`rank-value ${
-      artistRankShort === 1 ? 'rank-label-1' :
-      artistRankShort === 2 ? 'rank-label-2' :
-      artistRankShort === 3 ? 'rank-label-3' : ''
-    }`}>
-      {artistRankShort || <span className="na">N/A</span>}
-      {artistRankShort && (
-        <span className="rank-suffix">
-          {artistRankShort === 1 ? 'st' :
-           artistRankShort === 2 ? 'nd' :
-           artistRankShort === 3 ? 'rd' : 'th'}
-        </span>
-      )}
+    <div className="rank-card">
+      <div className="rank-header">4 Week Rank</div>
+      <div className={`rank-value ${
+        artistRankShort === 1 ? 'rank-label-1' :
+        artistRankShort === 2 ? 'rank-label-2' :
+        artistRankShort === 3 ? 'rank-label-3' : ''
+      }`}>
+        {artistRankShort !== null ? artistRankShort : <span className="na">&gt;100</span>}
+        {artistRankShort && (
+          <span className="rank-suffix">
+            {artistRankShort === 1 ? 'st' :
+            artistRankShort === 2 ? 'nd' :
+            artistRankShort === 3 ? 'rd' : 'th'}
+          </span>
+        )}
+      </div>
+    </div>
+    <div className="rank-card">
+      <div className="rank-header">6 Month Rank</div>
+      <div className={`rank-value ${
+        artistRankMedium === 1 ? 'rank-label-1' :
+        artistRankMedium === 2 ? 'rank-label-2' :
+        artistRankMedium === 3 ? 'rank-label-3' : ''
+      }`}>
+        {artistRankMedium !== null ? artistRankMedium : <span className="na">&gt;100</span>}
+        {artistRankMedium && (
+          <span className="rank-suffix">
+            {artistRankMedium === 1 ? 'st' :
+            artistRankMedium === 2 ? 'nd' :
+            artistRankMedium === 3 ? 'rd' : 'th'}
+          </span>
+        )}
+      </div>
+    </div>
+    <div className="rank-card">
+      <div className="rank-header">1 Year Rank</div>
+      <div className={`rank-value ${
+        artistRankLong === 1 ? 'rank-label-1' :
+        artistRankLong === 2 ? 'rank-label-2' :
+        artistRankLong === 3 ? 'rank-label-3' : ''
+      }`}>
+        {artistRankLong !== null ? artistRankLong : <span className="na">&gt;100</span>}
+        {artistRankLong && (
+          <span className="rank-suffix">
+            {artistRankLong === 1 ? 'st' :
+            artistRankLong === 2 ? 'nd' :
+            artistRankLong === 3 ? 'rd' : 'th'}
+          </span>
+        )}
+      </div>
     </div>
   </div>
-  <div className="rank-card">
-      <div className="rank-header">6 Month Rank</div>
-        <div className={`rank-value ${
-          artistRankMedium === 1 ? 'rank-label-1' :
-          artistRankMedium === 2 ? 'rank-label-2' :
-          artistRankMedium === 3 ? 'rank-label-3' : ''
-        }`}>
-          {artistRankMedium || <span className="na">N/A</span>}
-          {artistRankMedium && (
-            <span className="rank-suffix">
-              {artistRankMedium === 1 ? 'st' :
-              artistRankMedium === 2 ? 'nd' :
-              artistRankMedium === 3 ? 'rd' : 'th'}
-            </span>
-          )}
-        </div>
-      </div>
-      <div className="rank-card">
-        <div className="rank-header">1 Year Rank</div>
-        <div className={`rank-value ${
-          artistRankLong === 1 ? 'rank-label-1' :
-          artistRankLong === 2 ? 'rank-label-2' :
-          artistRankLong === 3 ? 'rank-label-3' : ''
-        }`}>
-          {artistRankLong || <span className="na">N/A</span>}
-          {artistRankLong && (
-            <span className="rank-suffix">
-              {artistRankLong === 1 ? 'st' :
-              artistRankLong === 2 ? 'nd' :
-              artistRankLong === 3 ? 'rd' : 'th'}
-            </span>
-          )}
-        </div>
-      </div>
-    </div>
 
             {/* Button to go to the artist's Spotify page */}
             <button
