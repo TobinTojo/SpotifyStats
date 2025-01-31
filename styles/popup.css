@@ -329,3 +329,133 @@ select option {
 .track-item {
     cursor: pointer;
 }
+
+/* popup.css Updates */
+.artist-ranks {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+    padding: 10px;
+  }
+  
+  .rank-card {
+    background: linear-gradient(145deg, #2a2a2a, #202020);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+  }
+  
+  .rank-card:hover {
+    transform: translateY(-3px);
+  }
+  
+  .rank-header {
+    color: #b3b3b3;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .rank-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1DB954;
+    position: relative;
+  }
+  
+  .na {
+    color: #666;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 18px;
+  }
+  
+  /* Medal styling for top 3 ranks */
+  .rank-value[data-rank="1"] { color: gold; }
+  .rank-value[data-rank="2"] { color: silver; }
+  .rank-value[data-rank="3"] { color: #cd7f32; }
+  
+  .rank-value::after {
+    content: "";
+    display: block;
+    width: 30%;
+    height: 2px;
+    background: #1DB954;
+    margin: 8px auto 0;
+    opacity: 0.3;
+  }
+
+  /* Update the CSS to use your classes instead of attribute selectors */
+.rank-label-1 {
+    color: gold !important;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+.rank-label-2 {
+    color: silver !important;
+    text-shadow: 0 0 8px rgba(192, 192, 192, 0.4);
+}
+
+.rank-label-3 {
+    color: #cd7f32 !important;
+    text-shadow: 0 0 8px rgba(205, 127, 50, 0.4);
+}
+
+/* Remove previous medal styling */
+.rank-value[data-rank="1"], 
+.rank-value[data-rank="2"], 
+.rank-value[data-rank="3"] {
+    color: inherit;
+}
+
+/* Add to popup.css */
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .rank-value {
+    animation: fadeIn 0.6s ease-out forwards;
+    opacity: 0; /* Start invisible */
+  }
+  
+  /* Staggered delays for each rank card */
+  .rank-card:nth-child(1) .rank-value {
+    animation-delay: 0.2s;
+  }
+  
+  .rank-card:nth-child(2) .rank-value {
+    animation-delay: 0.4s;
+  }
+  
+  .rank-card:nth-child(3) .rank-value {
+    animation-delay: 0.6s;
+  }
+
+/* Add this to your popup.css */
+.rank-suffix {
+    font-size: 0.6em;
+    vertical-align: super;
+    color: inherit; /* Inherits the color from rank-value */
+    margin-left: 2px;
+    opacity: 0.8;
+  }
+  .rank-value {
+    position: relative;
+    display: inline-block;
+    min-width: 40px;
+  }
+
+  
+  

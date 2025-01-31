@@ -29,6 +29,25 @@ const App = () => {
   const [artistImage, setArtistImage] = useState(null); // State to hold the artist's image
   const [artistSpotifyLink, setArtistSpotifyLink] = useState(null); // State to hold the artist's Spotify link
   const [artistGenres, setArtistGenres] = useState([]); // Add this with other state declarations
+  const [artistRankShort, setArtistRankShort] = useState(null);
+  const [artistRankMedium, setArtistRankMedium] = useState(null);
+  const [artistRankLong, setArtistRankLong] = useState(null);
+  
+
+  const fetchTopArtists = async (timeRange, offset = 0) => {
+    try {
+      const url = `https://api.spotify.com/v1/me/top/artists?time_range=${timeRange}&limit=50&offset=${offset}`;
+      const response = await fetch(url, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const data = await response.json();
+      return data.items;
+    } catch (error) {
+      console.error(`Failed to fetch top artists for ${timeRange}:`, error);
+      return [];
+    }
+  };
+  
   
     const fetchArtistDetails = async (artistId) => {
       try {
@@ -232,12 +251,46 @@ const getAvailableTimeRanges = () => {
     setArtistSpotifyLink(artistDetails.external_urls.spotify);
     setArtistGenres(artistDetails.genres || []); // Add this line
     fetchArtistTopTracks(artist.id, artist.name);
+
+     // New artist rank fetching with offset
+    const fetchAllRanks = async (timeRange) => {
+      try {
+        const [firstSet, secondSet] = await Promise.all([
+          fetchTopArtists(timeRange, 0),
+          fetchTopArtists(timeRange, 50)
+        ]);
+        return [...firstSet, ...secondSet];
+      } catch (error) {
+        return [];
+      }
+    };
+
+    // New artist rank fetching
+    const [shortTermArtists, mediumTermArtists, longTermArtists] = await Promise.all([
+      fetchAllRanks('short_term'),
+      fetchAllRanks('medium_term'),
+      fetchAllRanks('long_term')
+    ]);
+
+    const findRank = (list, artistId) => {
+      const index = list.findIndex(a => a.id === artistId);
+      return index >= 0 ? index + 1 : null;
+    };
+  
+    setArtistRankShort(findRank(shortTermArtists, artist.id));
+    setArtistRankMedium(findRank(mediumTermArtists, artist.id));
+    setArtistRankLong(findRank(longTermArtists, artist.id));
+  
   };
 
 const closePopup = () => {
   const overlay = document.querySelector('.popup-overlay');
   const content = document.querySelector('.popup-content');
-  
+
+  setArtistRankShort(null);
+  setArtistRankMedium(null);
+  setArtistRankLong(null);
+
   if (overlay && content) {
       overlay.classList.add('closing');
       content.classList.add('closing');
@@ -343,6 +396,60 @@ const closePopup = () => {
               ? artistGenres.join(", ") 
               : "Not Provided By Spotify"}
           </div>
+
+          <div className="artist-ranks">
+  <div className="rank-card">
+    <div className="rank-header">4 Week Rank</div>
+    <div className={`rank-value ${
+      artistRankShort === 1 ? 'rank-label-1' :
+      artistRankShort === 2 ? 'rank-label-2' :
+      artistRankShort === 3 ? 'rank-label-3' : ''
+    }`}>
+      {artistRankShort || <span className="na">N/A</span>}
+      {artistRankShort && (
+        <span className="rank-suffix">
+          {artistRankShort === 1 ? 'st' :
+           artistRankShort === 2 ? 'nd' :
+           artistRankShort === 3 ? 'rd' : 'th'}
+        </span>
+      )}
+    </div>
+  </div>
+  <div className="rank-card">
+      <div className="rank-header">6 Month Rank</div>
+        <div className={`rank-value ${
+          artistRankMedium === 1 ? 'rank-label-1' :
+          artistRankMedium === 2 ? 'rank-label-2' :
+          artistRankMedium === 3 ? 'rank-label-3' : ''
+        }`}>
+          {artistRankMedium || <span className="na">N/A</span>}
+          {artistRankMedium && (
+            <span className="rank-suffix">
+              {artistRankMedium === 1 ? 'st' :
+              artistRankMedium === 2 ? 'nd' :
+              artistRankMedium === 3 ? 'rd' : 'th'}
+            </span>
+          )}
+        </div>
+      </div>
+      <div className="rank-card">
+        <div className="rank-header">1 Year Rank</div>
+        <div className={`rank-value ${
+          artistRankLong === 1 ? 'rank-label-1' :
+          artistRankLong === 2 ? 'rank-label-2' :
+          artistRankLong === 3 ? 'rank-label-3' : ''
+        }`}>
+          {artistRankLong || <span className="na">N/A</span>}
+          {artistRankLong && (
+            <span className="rank-suffix">
+              {artistRankLong === 1 ? 'st' :
+              artistRankLong === 2 ? 'nd' :
+              artistRankLong === 3 ? 'rd' : 'th'}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
 
             {/* Button to go to the artist's Spotify page */}
             <button
