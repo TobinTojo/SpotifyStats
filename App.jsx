@@ -46,6 +46,12 @@ const [isLoading, setIsLoading] = useState(false); // Add this with other state 
       setData([]); // Clear the artist/track list when toggling modes
     }, [mode]);
 
+     // Toggle between Top Stats and Search
+  const handleModeChange = (newMode) => {
+    setMode(newMode);
+    setData([]); // Clear data when switching modes
+  };
+
  // Function to handle search
   const handleSearch = async (query) => {
     if (!query) return;
@@ -476,13 +482,13 @@ const closePopup = () => {
           <div className="mode-toggle">
             <button
               className={mode === "topStats" ? "active" : ""}
-              onClick={() => setMode("topStats")}
+              onClick={() => handleModeChange("topStats")}
             >
               Statify Top Stats
             </button>
             <button
               className={mode === "search" ? "active" : ""}
-              onClick={() => setMode("search")}
+              onClick={() => handleModeChange("search")}
             >
               Statify Search
             </button>
@@ -587,9 +593,9 @@ const closePopup = () => {
           <div className="chart-container">
             <h3 className="chart-title">Number of Songs in Top 100</h3>
             <ArtistSongChart data={[
-              { timeFrame: '4 Weeks', songCount: popupTracks ? popupTracks.length : 0 },
-              { timeFrame: '6 Months', songCount: popupTracksSixMonths ? popupTracksSixMonths.length : 0 },
-              { timeFrame: '1 Year', songCount: popupTracksYear ? popupTracksYear.length : 0 },
+              { timeFrame: '4 Weeks', "Number of Songs": popupTracks ? popupTracks.length : 0 },
+              { timeFrame: '6 Months', "Number of Songs": popupTracksSixMonths ? popupTracksSixMonths.length : 0 },
+              { timeFrame: '1 Year', "Number of Songs": popupTracksYear ? popupTracksYear.length : 0 },
             ]} />
           </div>
 

@@ -36,7 +36,7 @@ const ArtistSongChart = ({ data }) => {
           wrapperStyle={{ color: '#fff', paddingTop: '10px' }} 
         />
         <Bar 
-          dataKey="songCount" 
+          dataKey="Number of Songs"
           fill="url(#barGradient)" 
           radius={[5, 5, 0, 0]} 
         />

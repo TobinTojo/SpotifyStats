@@ -2,7 +2,7 @@ import React from "react";
 
 const Login = () => {
   const clientId = import.meta.env.VITE_SPOTIFY_API_KEY;
-  const redirectUri = "http://localhost:5173";
+  const redirectUri = "https://mystatify.netlify.app";
   const scopes = [
     "user-read-private",
     "user-read-email",
@@ -36,17 +36,28 @@ const Login = () => {
         <div className="feature-card">
           <div className="music-note">🎵</div>
           <h3>Top Tracks</h3>
-          <p>See your most played songs across different time periods</p>
+          <p>Discover your most played songs across different time periods.</p>
         </div>
         
         <div className="feature-card">
           <div className="music-note">🎤</div>
           <h3>Artist Insights</h3>
-          <p>Explore your favorite artists and their popularity</p>
+          <p>Explore your favorite artists and their popularity over time.</p>
+        </div>
+
+
+        <div className="feature-card">
+          <div className="music-note">🔍</div>
+          <h3>Artist Search</h3>
+          <p>Search for any artist and view their top tracks in your library.</p>
+        </div>
+
+        <div className="feature-card">
+          <div className="music-note">📈</div>
+          <h3>Trend Analysis</h3>
+          <p>Analyze trends in your listening habits over the past year.</p>
         </div>
       </div>
-
-
 
       <div className="animated-background">
         {[...Array(8)].map((_, i) => (
