@@ -37,7 +37,7 @@ const App = () => {
   const [topTracksSecondSet, setTopTracksSecondSet] = useState([]); // Tracks 51-100 for past 4 weeks
 const [topTracksSixMonthsSecondSet, setTopTracksSixMonthsSecondSet] = useState([]); // Tracks 51-100 for 6 months
 const [topTracksYearSecondSet, setTopTracksYearSecondSet] = useState([]); // Tracks 51-100 for past year
-
+const [isLoading, setIsLoading] = useState(false); // Add this with other state declarations
 
     // Reset data when mode changes
     useEffect(() => {
@@ -356,42 +356,48 @@ const getAvailableTimeRanges = () => {
     }
   };
   const handleArtistClick = async (artist) => {
-    setSelectedArtist(artist.name);
-    const artistDetails = await fetchArtistDetails(artist.id);
-    setArtistImage(artistDetails.images?.[0]?.url);
-    setArtistSpotifyLink(artistDetails.external_urls.spotify);
-    setArtistGenres(artistDetails.genres || []); // Add this line
-    fetchArtistTopTracks(artist.id, artist.name);
-
-     // New artist rank fetching with offset
-    const fetchAllRanks = async (timeRange) => {
-      try {
-        const [firstSet, secondSet] = await Promise.all([
-          fetchTopArtists(timeRange, 0),
-          fetchTopArtists(timeRange, 50)
-        ]);
-        return [...firstSet, ...secondSet];
-      } catch (error) {
-        return [];
-      }
-    };
-
-    // New artist rank fetching
-    const [shortTermArtists, mediumTermArtists, longTermArtists] = await Promise.all([
-      fetchAllRanks('short_term'),
-      fetchAllRanks('medium_term'),
-      fetchAllRanks('long_term')
-    ]);
-
-    const findRank = (list, artistId) => {
-      const index = list.findIndex(a => a.id === artistId);
-      return index >= 0 ? index + 1 : null;
-    };
+    setIsLoading(true);
+    try {
+      setSelectedArtist(artist.name);
+      const artistDetails = await fetchArtistDetails(artist.id);
+      setArtistImage(artistDetails.images?.[0]?.url);
+      setArtistSpotifyLink(artistDetails.external_urls.spotify);
+      setArtistGenres(artistDetails.genres || []);
   
-    setArtistRankShort(findRank(shortTermArtists, artist.id));
-    setArtistRankMedium(findRank(mediumTermArtists, artist.id));
-    setArtistRankLong(findRank(longTermArtists, artist.id));
+      await fetchArtistTopTracks(artist.id, artist.name);
   
+      // Fetch artist ranks
+      const fetchAllRanks = async (timeRange) => {
+        try {
+          const [firstSet, secondSet] = await Promise.all([
+            fetchTopArtists(timeRange, 0),
+            fetchTopArtists(timeRange, 50)
+          ]);
+          return [...firstSet, ...secondSet];
+        } catch (error) {
+          return [];
+        }
+      };
+  
+      const [shortTermArtists, mediumTermArtists, longTermArtists] = await Promise.all([
+        fetchAllRanks('short_term'),
+        fetchAllRanks('medium_term'),
+        fetchAllRanks('long_term')
+      ]);
+  
+      const findRank = (list, artistId) => {
+        const index = list.findIndex(a => a.id === artistId);
+        return index >= 0 ? index + 1 : null;
+      };
+  
+      setArtistRankShort(findRank(shortTermArtists, artist.id));
+      setArtistRankMedium(findRank(mediumTermArtists, artist.id));
+      setArtistRankLong(findRank(longTermArtists, artist.id));
+    } catch (error) {
+      console.error("Error fetching artist data:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
 const closePopup = () => {
@@ -481,11 +487,16 @@ const closePopup = () => {
       )}
       <Footer />
 
-{/* Popup to display top tracks for the selected artist */}
-{(popupTracks !== null || popupTracksSixMonths !== null || popupTracksYear !== null) && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-
+{/* Popup to display artist details */}
+{selectedArtist && (
+  <div className="popup-overlay">
+    <div className="popup-content">
+      {isLoading ? (
+        <div className="loading-spinner-container">
+          <div className="loading-spinner"></div>
+        </div>
+      ) : (
+        <>
           <button 
             className="close-popup" 
             onClick={closePopup}
@@ -494,16 +505,16 @@ const closePopup = () => {
             {/* Text content removed - using CSS pseudo-elements */}
           </button>
 
-            {/* Artist's Title */}
-            <h1>{selectedArtist}</h1>
+          {/* Artist's Title */}
+          <h1>{selectedArtist}</h1>
 
-            {/* Artist's Image */}
-            <img
-              class="popup-artist-img"
-              src={artistImage}
-              alt={selectedArtist}
-              style={{ width: '100px', height: '100px', objectFit: 'cover' }}
-            />
+          {/* Artist's Image */}
+          <img
+            className="popup-artist-img"
+            src={artistImage}
+            alt={selectedArtist}
+            style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+          />
 
           <div className="genre-section">
             <strong>Genres: </strong>
@@ -513,195 +524,196 @@ const closePopup = () => {
           </div>
 
           <div className="artist-ranks">
-    <div className="rank-card">
-      <div className="rank-header">4 Week Rank</div>
-      <div className={`rank-value ${
-        artistRankShort === 1 ? 'rank-label-1' :
-        artistRankShort === 2 ? 'rank-label-2' :
-        artistRankShort === 3 ? 'rank-label-3' : ''
-      }`}>
-        {artistRankShort !== null ? artistRankShort : <span className="na">&gt;100</span>}
-        {artistRankShort && (
-          <span className="rank-suffix">
-            {artistRankShort === 1 ? 'st' :
-            artistRankShort === 2 ? 'nd' :
-            artistRankShort === 3 ? 'rd' : 'th'}
-          </span>
-        )}
-      </div>
-    </div>
-    <div className="rank-card">
-      <div className="rank-header">6 Month Rank</div>
-      <div className={`rank-value ${
-        artistRankMedium === 1 ? 'rank-label-1' :
-        artistRankMedium === 2 ? 'rank-label-2' :
-        artistRankMedium === 3 ? 'rank-label-3' : ''
-      }`}>
-        {artistRankMedium !== null ? artistRankMedium : <span className="na">&gt;100</span>}
-        {artistRankMedium && (
-          <span className="rank-suffix">
-            {artistRankMedium === 1 ? 'st' :
-            artistRankMedium === 2 ? 'nd' :
-            artistRankMedium === 3 ? 'rd' : 'th'}
-          </span>
-        )}
-      </div>
-    </div>
-    <div className="rank-card">
-      <div className="rank-header">1 Year Rank</div>
-      <div className={`rank-value ${
-        artistRankLong === 1 ? 'rank-label-1' :
-        artistRankLong === 2 ? 'rank-label-2' :
-        artistRankLong === 3 ? 'rank-label-3' : ''
-      }`}>
-        {artistRankLong !== null ? artistRankLong : <span className="na">&gt;100</span>}
-        {artistRankLong && (
-          <span className="rank-suffix">
-            {artistRankLong === 1 ? 'st' :
-            artistRankLong === 2 ? 'nd' :
-            artistRankLong === 3 ? 'rd' : 'th'}
-          </span>
-        )}
-      </div>
+            <div className="rank-card">
+              <div className="rank-header">4 Week Rank</div>
+              <div className={`rank-value ${
+                artistRankShort === 1 ? 'rank-label-1' :
+                artistRankShort === 2 ? 'rank-label-2' :
+                artistRankShort === 3 ? 'rank-label-3' : ''
+              }`}>
+                {artistRankShort !== null ? artistRankShort : <span className="na">&gt;100</span>}
+                {artistRankShort && (
+                  <span className="rank-suffix">
+                    {artistRankShort === 1 ? 'st' :
+                    artistRankShort === 2 ? 'nd' :
+                    artistRankShort === 3 ? 'rd' : 'th'}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="rank-card">
+              <div className="rank-header">6 Month Rank</div>
+              <div className={`rank-value ${
+                artistRankMedium === 1 ? 'rank-label-1' :
+                artistRankMedium === 2 ? 'rank-label-2' :
+                artistRankMedium === 3 ? 'rank-label-3' : ''
+              }`}>
+                {artistRankMedium !== null ? artistRankMedium : <span className="na">&gt;100</span>}
+                {artistRankMedium && (
+                  <span className="rank-suffix">
+                    {artistRankMedium === 1 ? 'st' :
+                    artistRankMedium === 2 ? 'nd' :
+                    artistRankMedium === 3 ? 'rd' : 'th'}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="rank-card">
+              <div className="rank-header">1 Year Rank</div>
+              <div className={`rank-value ${
+                artistRankLong === 1 ? 'rank-label-1' :
+                artistRankLong === 2 ? 'rank-label-2' :
+                artistRankLong === 3 ? 'rank-label-3' : ''
+              }`}>
+                {artistRankLong !== null ? artistRankLong : <span className="na">&gt;100</span>}
+                {artistRankLong && (
+                  <span className="rank-suffix">
+                    {artistRankLong === 1 ? 'st' :
+                    artistRankLong === 2 ? 'nd' :
+                    artistRankLong === 3 ? 'rd' : 'th'}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Button to go to the artist's Spotify page */}
+          <button
+            className="artist-spotify-button"
+            onClick={() => window.open(artistSpotifyLink, "_blank")}
+          >
+            <img 
+              src="./spotify_512_black.png" 
+              alt="Spotify Icon" 
+              style={{ width: "28px", marginRight: "8px" }} 
+            />
+            Visit Artist on Spotify
+          </button>
+          
+          {/* Dropdown for selecting time range */}
+          <div>
+            <label htmlFor="time-range-select">Filter by Time Range: </label>
+            <select
+              id="time-range-select"
+              value={selectedTimeRange}
+              onChange={handleTimeRangeChange}
+            >
+              <option value="short_term" disabled={!popupTracks || popupTracks.length === 0}>
+                Past 4 Weeks
+              </option>
+              <option
+                value="medium_term"
+                disabled={!popupTracksSixMonths || popupTracksSixMonths.length === 0}
+              >
+                Past 6 Months
+              </option>
+              <option
+                value="long_term"
+                disabled={!popupTracksYear || popupTracksYear.length === 0}
+              >
+                Past Year
+              </option>
+            </select>
+          </div>
+
+          {/* Check if no tracks in any of the time periods */}
+          {(
+            (popupTracks && popupTracks.length === 0) &&
+            (popupTracksSixMonths && popupTracksSixMonths.length === 0) &&
+            (popupTracksYear && popupTracksYear.length === 0)
+          ) ? (
+            <p>No tracks by {selectedArtist} in the top 100 from the past 4 weeks, 6 months, or the past year</p>
+          ) : (
+            <>
+              <h3>Your Top Tracks Featuring {selectedArtist}</h3>
+
+              {/* Display filtered tracks based on selected time range */}
+              <div id="tracks-container">
+                <div className="click-hint">
+                  Click any track to listen on Spotify
+                  <span className="pulsating-arrow">→</span>
+                </div>
+                {getFilteredTracks().map((track, index) => {
+                  // Determine the global rank based on the selected time range
+                  let globalRank = null;
+
+                  switch (selectedTimeRange) {
+                    case "short_term":
+                      // Check first 50 tracks
+                      const shortTermIndex = topTracks.findIndex((t) => t.id === track.id);
+                      if (shortTermIndex !== -1) {
+                        globalRank = shortTermIndex + 1;
+                      } else {
+                        // Check next 50 tracks
+                        const secondSetIndex = topTracksSecondSet.findIndex((t) => t.id === track.id);
+                        if (secondSetIndex !== -1) globalRank = secondSetIndex + 51;
+                      }
+                      break;
+
+                    case "medium_term":
+                      const mediumTermIndex = topTracksSixMonths.findIndex((t) => t.id === track.id);
+                      if (mediumTermIndex !== -1) {
+                        globalRank = mediumTermIndex + 1;
+                      } else {
+                        const secondSetIndex = topTracksSixMonthsSecondSet.findIndex((t) => t.id === track.id);
+                        if (secondSetIndex !== -1) globalRank = secondSetIndex + 51;
+                      }
+                      break;
+
+                    case "long_term":
+                      const longTermIndex = topTracksYear.findIndex((t) => t.id === track.id);
+                      if (longTermIndex !== -1) {
+                        globalRank = longTermIndex + 1;
+                      } else {
+                        const secondSetIndex = topTracksYearSecondSet.findIndex((t) => t.id === track.id);
+                        if (secondSetIndex !== -1) globalRank = secondSetIndex + 51;
+                      }
+                      break;
+                  }
+
+                  // Track style logic remains the same
+                  const { trackStyle, nameStyle } = getTrackStyle(index);
+
+                  return (
+                    <div key={track.id} className="track-item" style={trackStyle}>
+                      <div className="track-number" style={{ color: trackStyle.color }}>
+                        {globalRank ? `${globalRank}.` : "N/A"}
+                      </div>
+                      <img
+                        src={track.album.images?.[2]?.url || track.album.images?.[0]?.url}
+                        alt={track.name}
+                        className="track-image"
+                      />
+                      <div className="track-info">
+                        <strong style={nameStyle}>{track.name}</strong>
+                        <br />
+                        <span>by {track.artists.map((artist) => artist.name).join(", ")}</span>
+                        <br />
+                        <span>Popularity: {track.popularity}</span>
+                      </div>
+                      <div className="click-indicator">
+                        <svg 
+                          width="24" 
+                          height="24" 
+                          viewBox="0 0 24 24" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          strokeWidth="2"
+                        >
+                          <path d="M9 18l6-6-6-6"/>
+                        </svg>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </>
+      )}
     </div>
   </div>
-
-            {/* Button to go to the artist's Spotify page */}
-            <button
-              className="artist-spotify-button"
-              onClick={() => window.open(artistSpotifyLink, "_blank")}
-            >
-              <img 
-                src="./spotify_512_black.png" 
-                alt="Spotify Icon" 
-                style={{ width: "28px", marginRight: "8px" }} 
-              />
-              Visit Artist on Spotify
-            </button>
-            
-            {/* Dropdown for selecting time range */}
-            <div>
-              <label htmlFor="time-range-select">Filter by Time Range: </label>
-              <select
-  id="time-range-select"
-  value={selectedTimeRange}
-  onChange={handleTimeRangeChange}
->
-  <option value="short_term" disabled={!popupTracks || popupTracks.length === 0}>
-    Past 4 Weeks
-  </option>
-  <option
-    value="medium_term"
-    disabled={!popupTracksSixMonths || popupTracksSixMonths.length === 0}
-  >
-    Past 6 Months
-  </option>
-  <option
-    value="long_term"
-    disabled={!popupTracksYear || popupTracksYear.length === 0}
-  >
-    Past Year
-  </option>
-</select>
-            </div>
-
-            {/* Check if no tracks in any of the time periods */}
-            {(
-              (popupTracks && popupTracks.length === 0) &&
-              (popupTracksSixMonths && popupTracksSixMonths.length === 0) &&
-              (popupTracksYear && popupTracksYear.length === 0)
-            ) ? (
-              <p>No tracks by {selectedArtist} in the top 100 from the past 4 weeks, 6 months, or the past year</p>
-            ) : (
-              <>
-                <h3>Your Top Tracks Featuring {selectedArtist}</h3>
-
-                {/* Display filtered tracks based on selected time range */}
-                <div id="tracks-container">
-                  <div className="click-hint">
-                    Click any track to listen on Spotify
-                    <span className="pulsating-arrow">→</span>
-                  </div>
-                  {getFilteredTracks().map((track, index) => {
-  // Determine the global rank based on the selected time range
-  let globalRank = null;
-
-  switch (selectedTimeRange) {
-    case "short_term":
-      // Check first 50 tracks
-      const shortTermIndex = topTracks.findIndex((t) => t.id === track.id);
-      if (shortTermIndex !== -1) {
-        globalRank = shortTermIndex + 1;
-      } else {
-        // Check next 50 tracks
-        const secondSetIndex = topTracksSecondSet.findIndex((t) => t.id === track.id);
-        if (secondSetIndex !== -1) globalRank = secondSetIndex + 51;
-      }
-      break;
-
-    case "medium_term":
-      const mediumTermIndex = topTracksSixMonths.findIndex((t) => t.id === track.id);
-      if (mediumTermIndex !== -1) {
-        globalRank = mediumTermIndex + 1;
-      } else {
-        const secondSetIndex = topTracksSixMonthsSecondSet.findIndex((t) => t.id === track.id);
-        if (secondSetIndex !== -1) globalRank = secondSetIndex + 51;
-      }
-      break;
-
-    case "long_term":
-      const longTermIndex = topTracksYear.findIndex((t) => t.id === track.id);
-      if (longTermIndex !== -1) {
-        globalRank = longTermIndex + 1;
-      } else {
-        const secondSetIndex = topTracksYearSecondSet.findIndex((t) => t.id === track.id);
-        if (secondSetIndex !== -1) globalRank = secondSetIndex + 51;
-      }
-      break;
-  }
-
-  // Track style logic remains the same
-  const { trackStyle, nameStyle } = getTrackStyle(index);
-
-  return (
-    <div key={track.id} className="track-item" style={trackStyle}>
-      <div className="track-number" style={{ color: trackStyle.color }}>
-        {globalRank ? `${globalRank}.` : "N/A"}
-      </div>
-      <img
-        src={track.album.images?.[2]?.url || track.album.images?.[0]?.url}
-        alt={track.name}
-        className="track-image"
-      />
-      <div className="track-info">
-        <strong style={nameStyle}>{track.name}</strong>
-        <br />
-        <span>by {track.artists.map((artist) => artist.name).join(", ")}</span>
-        <br />
-        <span>Popularity: {track.popularity}</span>
-      </div>
-      <div className="click-indicator">
-        <svg 
-          width="24" 
-          height="24" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2"
-        >
-          <path d="M9 18l6-6-6-6"/>
-        </svg>
-      </div>
-    </div>
-  );
-})}
-</div>
-
-              </>
-            )}
-          </div>
-        </div>
-      )}
+)}
     </div>
   );
 };
