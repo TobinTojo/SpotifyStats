@@ -32,7 +32,88 @@ const App = () => {
   const [artistRankShort, setArtistRankShort] = useState(null);
   const [artistRankMedium, setArtistRankMedium] = useState(null);
   const [artistRankLong, setArtistRankLong] = useState(null);
-  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [mode, setMode] = useState("topStats"); // New state for mode: "topStats" or "search"
+  const [topTracksSecondSet, setTopTracksSecondSet] = useState([]); // Tracks 51-100 for past 4 weeks
+const [topTracksSixMonthsSecondSet, setTopTracksSixMonthsSecondSet] = useState([]); // Tracks 51-100 for 6 months
+const [topTracksYearSecondSet, setTopTracksYearSecondSet] = useState([]); // Tracks 51-100 for past year
+
+
+    // Reset data when mode changes
+    useEffect(() => {
+      setData([]); // Clear the artist/track list when toggling modes
+    }, [mode]);
+
+ // Function to handle search
+  const handleSearch = async (query) => {
+    if (!query) return;
+
+    try {
+      const response = await fetch(
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=artist&limit=10`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      const data = await response.json();
+      setData(data.artists.items); // Update the data state with search results
+    } catch (error) {
+      console.error("Failed to search artists:", error);
+    }
+  };
+
+  // Render the appropriate content based on the mode
+  const renderContent = () => {
+    if (mode === "topStats") {
+      return (
+        <div>
+          <InteractionForm
+            statType={statType}
+            setStatType={handleStatTypeChange}
+            timeRange={timeRange}
+            setTimeRange={setTimeRange}
+            trackLimit={trackLimit}
+            setTrackLimit={setTrackLimit}
+            onSubmit={handleSubmit}
+          />
+          {statType === "tracks" ? (
+            <TracksList tracks={data} />
+          ) : (
+            <ArtistsList
+              artists={data}
+              onArtistClick={handleArtistClick}
+              isSearchMode={false} // Not in search mode
+            />
+          )}
+        </div>
+      );
+    } else if (mode === "search") {
+      return (
+        <div className="search-container">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSearch(searchQuery);
+            }}
+          >
+            <input
+              type="text"
+              placeholder="Search for an artist..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button type="submit">Search</button>
+          </form>
+          <ArtistsList
+            artists={data}
+            onArtistClick={handleArtistClick}
+            isSearchMode={true} // In search mode
+          />
+        </div>
+      );
+    }
+  };
+
 
   const fetchTopArtists = async (timeRange, offset = 0) => {
     try {
@@ -77,18 +158,18 @@ useEffect(() => {
   }
 }, [popupTracks, popupTracksSixMonths, popupTracksYear]);
 
-  const getFilteredTracks = () => {
-    switch (selectedTimeRange) {
-      case "short_term":
-        return popupTracks; // Past 4 weeks
-      case "medium_term":
-        return popupTracksSixMonths; // Past 6 months
-      case "long_term":
-        return popupTracksYear; // Past Year
-      default:
-        return [];
-    }
-  };
+const getFilteredTracks = () => {
+  switch (selectedTimeRange) {
+    case "short_term":
+      return popupTracks; // Past 4 weeks
+    case "medium_term":
+      return popupTracksSixMonths; // Past 6 months
+    case "long_term":
+      return popupTracksYear; // Past Year
+    default:
+      return [];
+  }
+};
 
   // Helper function to check available time ranges
 const getAvailableTimeRanges = () => {
@@ -178,17 +259,18 @@ const getAvailableTimeRanges = () => {
     setData([]); // Clear data when statType changes
   }, [statType]);
 
-  // Fetch top 50 tracks for past 4 weeks
-  const fetchTopTracks = async () => {
+  // Fetch top 100 tracks for past 4 weeks
+  const fetchTopTracks = async (offset = 0) => {
     try {
-      const topTracksUrl = `https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=50`;
+      const topTracksUrl = `https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=50&offset=${offset}`;
       const response = await fetch(topTracksUrl, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       const result = await response.json();
-      setTopTracks(result.items); // Store top 50 tracks for past 4 weeks
+      return result.items; // Return the fetched tracks
     } catch (error) {
       console.error("Failed to fetch top tracks:", error);
+      return [];
     }
   };
 
@@ -198,52 +280,81 @@ const getAvailableTimeRanges = () => {
     }
   }, [accessToken]);
 
-  // Fetch top 50 tracks from the last 6 months
-  const fetchTopTracksLastSixMonths = async (artistId, artistName) => {
+  const fetchTopTracksLastSixMonths = async (offset = 0) => {
     try {
-      const topTracksUrl = `https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=50`;
+      const topTracksUrl = `https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=50&offset=${offset}`;
       const response = await fetch(topTracksUrl, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       const result = await response.json();
-      const tracksByArtist = result.items.filter((track) =>
-        track.artists.some((artist) => artist.id === artistId)
-      );
-      setTopTracksSixMonths(result.items); // Store all 6-month tracks
-      setPopupTracksSixMonths(tracksByArtist); // Store the tracks for the last 6 months filtered by artist
+      return result.items; // Return ALL tracks (no artist filter)
     } catch (error) {
-      console.error("Failed to fetch top tracks from the last 6 months:", error);
+      console.error("Failed to fetch 6-month tracks:", error);
+      return [];
     }
   };
 
-  // Fetch top 50 tracks from the past year
-  const fetchTopTracksYear = async (artistId, artistName) => {
+  const fetchTopTracksYear = async (offset = 0) => {
     try {
-      const topTracksUrl = `https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=50`;
+      const topTracksUrl = `https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=50&offset=${offset}`;
       const response = await fetch(topTracksUrl, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       const result = await response.json();
-      const tracksByArtist = result.items.filter((track) =>
-        track.artists.some((artist) => artist.id === artistId)
-      );
-      setTopTracksYear(result.items); // Store all year tracks
-      setPopupTracksYear(tracksByArtist); // Store the tracks for the past year filtered by artist
+      return result.items; // Return ALL tracks (no artist filter)
     } catch (error) {
-      console.error("Failed to fetch top tracks from the past year:", error);
+      console.error("Failed to fetch year tracks:", error);
+      return [];
     }
   };
-
-  const fetchArtistTopTracks = (artistId, artistName) => {
-    const tracksByArtist = topTracks.filter((track) =>
-      track.artists.some((artist) => artist.id === artistId)
-    );
-    setPopupTracks(tracksByArtist);
-    setSelectedArtist(artistName);
-    fetchTopTracksLastSixMonths(artistId, artistName);
-    fetchTopTracksYear(artistId, artistName);
+  const fetchArtistTopTracks = async (artistId, artistName) => {
+    try {
+      // Fetch ALL tracks for each time range (no filtering)
+      // --- Past 4 Weeks ---
+      const shortTermFirstSet = await fetchTopTracks(0);
+      const shortTermSecondSet = await fetchTopTracks(50);
+      const allShortTermTracks = [...shortTermFirstSet, ...shortTermSecondSet];
+      // Filter by artist
+      const artistShortTermTracks = allShortTermTracks.filter((track) =>
+        track.artists.some((a) => a.id === artistId)
+      );
+  
+      // --- Past 6 Months ---
+      const sixMonthsFirstSet = await fetchTopTracksLastSixMonths(0);
+      const sixMonthsSecondSet = await fetchTopTracksLastSixMonths(50);
+      const allSixMonthsTracks = [...sixMonthsFirstSet, ...sixMonthsSecondSet];
+      // Filter by artist
+      const artistSixMonthsTracks = allSixMonthsTracks.filter((track) =>
+        track.artists.some((a) => a.id === artistId)
+      );
+  
+      // --- Past Year ---
+      const yearFirstSet = await fetchTopTracksYear(0);
+      const yearSecondSet = await fetchTopTracksYear(50);
+      const allYearTracks = [...yearFirstSet, ...yearSecondSet];
+      // Filter by artist
+      const artistYearTracks = allYearTracks.filter((track) =>
+        track.artists.some((a) => a.id === artistId)
+      );
+  
+      // Update state with filtered tracks
+      setPopupTracks(artistShortTermTracks);
+      setPopupTracksSixMonths(artistSixMonthsTracks);
+      setPopupTracksYear(artistYearTracks);
+  
+      // Store unfiltered track sets for rank calculation
+      setTopTracks(shortTermFirstSet);
+      setTopTracksSecondSet(shortTermSecondSet);
+      setTopTracksSixMonths(sixMonthsFirstSet);
+      setTopTracksSixMonthsSecondSet(sixMonthsSecondSet);
+      setTopTracksYear(yearFirstSet);
+      setTopTracksYearSecondSet(yearSecondSet);
+  
+      setSelectedArtist(artistName);
+    } catch (error) {
+      console.error("Failed to fetch artist tracks:", error);
+    }
   };
-
   const handleArtistClick = async (artist) => {
     setSelectedArtist(artist.name);
     const artistDetails = await fetchArtistDetails(artist.id);
@@ -348,20 +459,24 @@ const closePopup = () => {
         <Login />
       ) : (
         <div>
-          <InteractionForm
-            statType={statType}
-            setStatType={handleStatTypeChange}
-            timeRange={timeRange}
-            setTimeRange={setTimeRange}
-            trackLimit={trackLimit}
-            setTrackLimit={setTrackLimit}
-            onSubmit={handleSubmit}
-          />
-          {statType === "tracks" ? (
-            <TracksList tracks={data} />
-          ) : (
-            <ArtistsList artists={data} onArtistClick={handleArtistClick} />
-          )}
+          {/* Toggle between Top Stats and Search */}
+          <div className="mode-toggle">
+            <button
+              className={mode === "topStats" ? "active" : ""}
+              onClick={() => setMode("topStats")}
+            >
+              Statify Top Stats
+            </button>
+            <button
+              className={mode === "search" ? "active" : ""}
+              onClick={() => setMode("search")}
+            >
+              Statify Search
+            </button>
+          </div>
+
+          {/* Render the appropriate content */}
+          {renderContent()}
         </div>
       )}
       <Footer />
@@ -468,26 +583,26 @@ const closePopup = () => {
             <div>
               <label htmlFor="time-range-select">Filter by Time Range: </label>
               <select
-                id="time-range-select"
-                value={selectedTimeRange}
-                onChange={handleTimeRangeChange}
-              >
-                <option value="short_term" disabled={!popupTracks || popupTracks.length === 0}>
-                  Past 4 Weeks
-                </option>
-                <option
-                  value="medium_term"
-                  disabled={!popupTracksSixMonths || popupTracksSixMonths.length === 0}
-                >
-                  Past 6 Months
-                </option>
-                <option
-                  value="long_term"
-                  disabled={!popupTracksYear || popupTracksYear.length === 0}
-                >
-                  Past Year
-                </option>
-              </select>
+  id="time-range-select"
+  value={selectedTimeRange}
+  onChange={handleTimeRangeChange}
+>
+  <option value="short_term" disabled={!popupTracks || popupTracks.length === 0}>
+    Past 4 Weeks
+  </option>
+  <option
+    value="medium_term"
+    disabled={!popupTracksSixMonths || popupTracksSixMonths.length === 0}
+  >
+    Past 6 Months
+  </option>
+  <option
+    value="long_term"
+    disabled={!popupTracksYear || popupTracksYear.length === 0}
+  >
+    Past Year
+  </option>
+</select>
             </div>
 
             {/* Check if no tracks in any of the time periods */}
@@ -496,7 +611,7 @@ const closePopup = () => {
               (popupTracksSixMonths && popupTracksSixMonths.length === 0) &&
               (popupTracksYear && popupTracksYear.length === 0)
             ) ? (
-              <p>No tracks by {selectedArtist} in the top 50 from the past 4 weeks, 6 months, or the past year</p>
+              <p>No tracks by {selectedArtist} in the top 100 from the past 4 weeks, 6 months, or the past year</p>
             ) : (
               <>
                 <h3>Your Top Tracks Featuring {selectedArtist}</h3>
@@ -507,67 +622,79 @@ const closePopup = () => {
                     Click any track to listen on Spotify
                     <span className="pulsating-arrow">→</span>
                   </div>
-  {getFilteredTracks().map((track, index) => {
-    const { trackStyle, nameStyle } = getTrackStyle(index);
-    let trackRank = 0;
+                  {getFilteredTracks().map((track, index) => {
+  // Determine the global rank based on the selected time range
+  let globalRank = null;
 
-    // Calculate the rank based on the selected time range
-    switch (selectedTimeRange) {
-      case "short_term":
-        trackRank = topTracks.findIndex((t) => t.id === track.id) + 1;
-        break;
-      case "medium_term":
-        trackRank = topTracksSixMonths.findIndex((t) => t.id === track.id) + 1;
-        break;
-      case "long_term":
-        trackRank = topTracksYear.findIndex((t) => t.id === track.id) + 1;
-        break;
-      default:
-        trackRank = index + 1; // Default to index if no match
-    }
+  switch (selectedTimeRange) {
+    case "short_term":
+      // Check first 50 tracks
+      const shortTermIndex = topTracks.findIndex((t) => t.id === track.id);
+      if (shortTermIndex !== -1) {
+        globalRank = shortTermIndex + 1;
+      } else {
+        // Check next 50 tracks
+        const secondSetIndex = topTracksSecondSet.findIndex((t) => t.id === track.id);
+        if (secondSetIndex !== -1) globalRank = secondSetIndex + 51;
+      }
+      break;
 
-    const handleTrackClick = () => {
-      // Redirect to the track's Spotify page
-      window.open(track.external_urls.spotify, "_blank");
-    };
+    case "medium_term":
+      const mediumTermIndex = topTracksSixMonths.findIndex((t) => t.id === track.id);
+      if (mediumTermIndex !== -1) {
+        globalRank = mediumTermIndex + 1;
+      } else {
+        const secondSetIndex = topTracksSixMonthsSecondSet.findIndex((t) => t.id === track.id);
+        if (secondSetIndex !== -1) globalRank = secondSetIndex + 51;
+      }
+      break;
 
-    return (
-      <div
-        key={track.id}
-        className="track-item"
-        style={trackStyle}
-        onClick={handleTrackClick} // Add onClick event
-      >
-        <div className="track-number" style={{ color: trackStyle.color }}>
-          {trackRank}.
-        </div>
-        <img
-          src={track.album.images?.[2]?.url || track.album.images?.[0]?.url}
-          alt={track.name}
-          className="track-image"
-        />
-        <div className="track-info">
-          <strong style={nameStyle}>{track.name}</strong>
-          <br />
-          <span>by {track.artists.map((artist) => artist.name).join(", ")}</span>
-          <br />
-          <span>Popularity: {track.popularity}</span>
-        </div>
-        <div className="click-indicator">
-          <svg 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2"
-          >
-            <path d="M9 18l6-6-6-6"/>
-          </svg>
-        </div>
+    case "long_term":
+      const longTermIndex = topTracksYear.findIndex((t) => t.id === track.id);
+      if (longTermIndex !== -1) {
+        globalRank = longTermIndex + 1;
+      } else {
+        const secondSetIndex = topTracksYearSecondSet.findIndex((t) => t.id === track.id);
+        if (secondSetIndex !== -1) globalRank = secondSetIndex + 51;
+      }
+      break;
+  }
+
+  // Track style logic remains the same
+  const { trackStyle, nameStyle } = getTrackStyle(index);
+
+  return (
+    <div key={track.id} className="track-item" style={trackStyle}>
+      <div className="track-number" style={{ color: trackStyle.color }}>
+        {globalRank ? `${globalRank}.` : "N/A"}
       </div>
-    );
-  })}
+      <img
+        src={track.album.images?.[2]?.url || track.album.images?.[0]?.url}
+        alt={track.name}
+        className="track-image"
+      />
+      <div className="track-info">
+        <strong style={nameStyle}>{track.name}</strong>
+        <br />
+        <span>by {track.artists.map((artist) => artist.name).join(", ")}</span>
+        <br />
+        <span>Popularity: {track.popularity}</span>
+      </div>
+      <div className="click-indicator">
+        <svg 
+          width="24" 
+          height="24" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2"
+        >
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </div>
+    </div>
+  );
+})}
 </div>
 
               </>

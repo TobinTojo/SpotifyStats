@@ -1,12 +1,16 @@
 import React from "react";
 
-const ArtistsList = ({ artists, onArtistClick }) => {
+const ArtistsList = ({ artists, onArtistClick, isSearchMode }) => {
   if (!artists || artists.length === 0) {
     return <div>No artists to display. Please submit your selection.</div>;
   }
 
-  // Define styles for the top 3 and others
+  // Define styles for the top 3 and others (only if not in search mode)
   const getStyle = (index) => {
+    if (isSearchMode) {
+      return { backgroundColor: "#181818" }; // Default style for search mode
+    }
+
     if (index === 0) {
       return {
         color: "gold",
@@ -34,11 +38,13 @@ const ArtistsList = ({ artists, onArtistClick }) => {
     return { backgroundColor: "#181818" };
   };
 
-  const getFontWeight = (index) => (index < 3 ? "bold" : "normal");
+  const getFontWeight = (index) => (index < 3 && !isSearchMode ? "bold" : "normal");
 
   return (
     <div id="artists-container">
-      <h2>Leaderboard</h2>
+      {/* Only show "Leaderboard" heading if not in search mode */}
+      {!isSearchMode && <h2>Leaderboard</h2>}
+
       <div className="click-hint">
         Click any artist to view their advanced stats
         <span className="pulsating-arrow">→</span>
@@ -50,12 +56,15 @@ const ArtistsList = ({ artists, onArtistClick }) => {
           style={getStyle(index)}
           onClick={() => onArtistClick(artist)} // Trigger click event handler
         >
-          <div
-            className="artist-number"
-            style={{ color: getStyle(index).color, fontWeight: getFontWeight(index) }}
-          >
-            {index + 1}.
-          </div>
+          {/* Only show ranking number if not in search mode */}
+          {!isSearchMode && (
+            <div
+              className="artist-number"
+              style={{ color: getStyle(index).color, fontWeight: getFontWeight(index) }}
+            >
+              {index + 1}.
+            </div>
+          )}
           <img
             className="artist-image"
             src={artist.images?.[2]?.url || artist.images?.[0]?.url || ""}
@@ -72,8 +81,8 @@ const ArtistsList = ({ artists, onArtistClick }) => {
             <br />
             <span>Popularity: {artist.popularity}</span>
           </div>
-           {/* Add click indicator */}
-           <div className="click-indicator">
+          {/* Add click indicator */}
+          <div className="click-indicator">
             <svg 
               width="24" 
               height="24" 
@@ -92,5 +101,3 @@ const ArtistsList = ({ artists, onArtistClick }) => {
 };
 
 export default ArtistsList;
-
-
