@@ -10,6 +10,8 @@ import "./styles/login.css";
 import "./styles/interactionform.css";
 import "./styles/liststyles.css";
 import "./styles/popup.css";
+import "./styles/custombarchart.css";
+import ArtistSongChart from './components/ArtistSongChart';
 
 const App = () => {
   const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken") || null);
@@ -337,6 +339,11 @@ const getAvailableTimeRanges = () => {
         track.artists.some((a) => a.id === artistId)
       );
   
+      // Log the filtered tracks
+      console.log("4 Weeks Tracks:", artistShortTermTracks);
+      console.log("6 Months Tracks:", artistSixMonthsTracks);
+      console.log("1 Year Tracks:", artistYearTracks);
+  
       // Update state with filtered tracks
       setPopupTracks(artistShortTermTracks);
       setPopupTracksSixMonths(artistSixMonthsTracks);
@@ -487,8 +494,7 @@ const closePopup = () => {
       )}
       <Footer />
 
-{/* Popup to display artist details */}
-{selectedArtist && (
+      {selectedArtist && (
   <div className="popup-overlay">
     <div className="popup-content">
       {isLoading ? (
@@ -575,6 +581,16 @@ const closePopup = () => {
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Bar Chart */}
+          <div className="chart-container">
+            <h3 className="chart-title">Number of Songs in Top 100</h3>
+            <ArtistSongChart data={[
+              { timeFrame: '4 Weeks', songCount: popupTracks ? popupTracks.length : 0 },
+              { timeFrame: '6 Months', songCount: popupTracksSixMonths ? popupTracksSixMonths.length : 0 },
+              { timeFrame: '1 Year', songCount: popupTracksYear ? popupTracksYear.length : 0 },
+            ]} />
           </div>
 
           {/* Button to go to the artist's Spotify page */}
