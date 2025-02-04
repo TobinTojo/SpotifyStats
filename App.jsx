@@ -268,19 +268,32 @@ const getAvailableTimeRanges = () => {
 
   const handleSubmit = async () => {
     try {
-      const endpoint =
-        statType === "tracks" ? "me/top/tracks" : "me/top/artists";
-      const url = `https://api.spotify.com/v1/${endpoint}?${new URLSearchParams(
-        {
+      const endpoint = statType === "tracks" ? "me/top/tracks" : "me/top/artists";
+      const limit = trackLimit ? parseInt(trackLimit) : 20; // Default to 20 if not specified
+      const maxLimitPerRequest = 50; // Spotify's maximum limit per request
+      const numberOfRequests = Math.ceil(limit / maxLimitPerRequest);
+      let allItems = [];
+  
+      for (let i = 0; i < numberOfRequests; i++) {
+        const offset = i * maxLimitPerRequest;
+        const currentLimit = Math.min(maxLimitPerRequest, limit - offset);
+        if (currentLimit <= 0) break;
+  
+        const url = `https://api.spotify.com/v1/${endpoint}?${new URLSearchParams({
           time_range: timeRange,
-          limit: trackLimit,
-        }
-      )}`;
-      const response = await fetch(url, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      const result = await response.json();
-      setData(result.items);
+          limit: currentLimit,
+          offset: offset,
+        })}`;
+  
+        const response = await fetch(url, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        const result = await response.json();
+        allItems = [...allItems, ...result.items];
+      }
+  
+      // Slice to ensure we don't exceed the requested limit
+      setData(allItems.slice(0, limit));
     } catch (error) {
       console.error("Failed to fetch data:", error);
     }
