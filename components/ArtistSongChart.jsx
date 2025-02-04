@@ -19,6 +19,7 @@ const ArtistSongChart = ({ data }) => {
           dataKey="timeFrame" 
           tick={{ fill: '#fff' }} 
           axisLine={{ stroke: '#fff' }} 
+          interval={0} // Ensure all labels are displayed
         />
         <YAxis 
           tick={{ fill: '#fff' }} 

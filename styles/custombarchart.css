@@ -15,6 +15,10 @@
     color: #fff;
     text-align: center;
   }
+
+  .recharts-legend-wrapper {
+    margin-top: 200px;
+  } 
   
   /* Bar Chart Customization */
   .recharts-bar-rectangle {
@@ -47,6 +51,34 @@
     color: #fff !important;
   }
 
+  /* Pie Chart Container */
+.pie-chart-container {
+  background-color: #2a2a2a;
+  border-radius: 12px;
+  padding: 20px;
+  padding-bottom: 100px;
+  margin: 20px 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Pie Chart Labels */
+.recharts-pie-label-text {
+  fill: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+
+  /* Pie Chart Customization */
+.recharts-pie-label-text {
+  fill: #fff;
+  font-weight: bold;
+}
+.recharts-polar-grid-angle line {
+  stroke: #444;
+}
+
   /* Add this to styles.css */
 @keyframes barRise {
     from {
@@ -60,4 +92,45 @@
   .recharts-bar-rectangle {
     transform-origin: bottom;
     animation: barRise 0.5s ease-out;
+  }
+
+  /* Media Query for Screens 600px or Less */
+@media (max-width: 600px) {
+    .chart-container {
+      padding: 10px; /* Reduce padding for smaller screens */
+    }
+  
+    .chart-title {
+      font-size: 20px; /* Reduce font size for smaller screens */
+    }
+
+    .recharts-pie {
+      transform: scale(0.8);
+    }
+
+    .pie-chart-container {
+      padding: 15px;
+      margin: 10px 0;
+    }
+  
+    .recharts-pie-label-text {
+      font-size: 10px;
+    }
+  
+  
+    .recharts-x-axis {
+      font-size: 12px; /* Reduce font size of x-axis labels */
+    }
+  
+    .recharts-y-axis {
+      font-size: 12px; /* Reduce font size of y-axis labels */
+    }
+    tspan {
+        font-size: 12px;
+    }
+
+    .recharts-pie-label-text {
+      font-size: 12px;
+    }
+  
   }

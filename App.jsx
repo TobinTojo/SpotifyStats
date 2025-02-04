@@ -12,6 +12,7 @@ import "./styles/liststyles.css";
 import "./styles/popup.css";
 import "./styles/custombarchart.css";
 import ArtistSongChart from './components/ArtistSongChart';
+import AlbumPieChart from './components/AlbumPieChart';
 
 const App = () => {
   const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken") || null);
@@ -589,18 +590,8 @@ const closePopup = () => {
             </div>
           </div>
 
-          {/* Bar Chart */}
-          <div className="chart-container">
-            <h3 className="chart-title">Number of Songs in Top 100</h3>
-            <ArtistSongChart data={[
-              { timeFrame: '4 Weeks', "Number of Songs": popupTracks ? popupTracks.length : 0 },
-              { timeFrame: '6 Months', "Number of Songs": popupTracksSixMonths ? popupTracksSixMonths.length : 0 },
-              { timeFrame: '1 Year', "Number of Songs": popupTracksYear ? popupTracksYear.length : 0 },
-            ]} />
-          </div>
-
-          {/* Button to go to the artist's Spotify page */}
-          <button
+            {/* Button to go to the artist's Spotify page */}
+            <button
             className="artist-spotify-button"
             onClick={() => window.open(artistSpotifyLink, "_blank")}
           >
@@ -611,7 +602,17 @@ const closePopup = () => {
             />
             Visit Artist on Spotify
           </button>
-          
+
+          {/* Bar Chart */}
+          <div className="chart-container">
+            <h3 className="chart-title">Number of Songs in Top 100</h3>
+            <ArtistSongChart data={[
+              { timeFrame: '4 Weeks', "Number of Songs": popupTracks ? popupTracks.length : 0 },
+              { timeFrame: '6 Months', "Number of Songs": popupTracksSixMonths ? popupTracksSixMonths.length : 0 },
+              { timeFrame: '1 Year', "Number of Songs": popupTracksYear ? popupTracksYear.length : 0 },
+            ]} />
+          </div>
+
           {/* Dropdown for selecting time range */}
           <div>
             <label htmlFor="time-range-select">Filter by Time Range: </label>
@@ -637,6 +638,12 @@ const closePopup = () => {
               </option>
             </select>
           </div>
+          
+          <div className="pie-chart-container">
+            <h3 className="chart-title">Album Distribution in Top 100</h3>
+            <AlbumPieChart data={getFilteredTracks()} selectedArtist={selectedArtist} />
+          </div>
+          
 
           {/* Check if no tracks in any of the time periods */}
           {(
