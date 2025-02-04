@@ -253,13 +253,25 @@ select option {
     animation-delay: calc(var(--index) * 0.08s);
 }
 
-.genre-section, .credited-artist {
+.credited-artist {
+    font-size: 1.3em; /* Slightly larger for more prominence */
+    font-weight: 700; /* Bold font weight */
+    color: #61e661; /* Greenish color (light, vibrant green) */
+    letter-spacing: 2px; /* Added spacing between letters for emphasis */
+    text-align: center; /* Centers the title */
+    margin-top: 30px; /* More spacing above */
+    margin-bottom: 30px;
+    text-shadow: 0 0 10px rgba(102, 255, 102, 0.8), 0 0 20px rgba(102, 255, 102, 0.6); /* Greenish glow effect */
+}
+
+
+.genre-section {
     margin: 15px 0;
     font-size: 16px;
     color: #b3b3b3;
 }
 
-.genre-section strong, .credited-artist strong {
+.genre-section strong {
     color: #fff;
     margin-right: 8px;
 }
@@ -456,3 +468,57 @@ select option {
     display: inline-block;
     min-width: 40px;
   }
+
+  .track-meta {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    gap: 15px;
+    font-size: 14px; /* Increase font size for better readability */
+    color: #e0e0e0; /* Lighter color for better visibility */
+    text-align: center; /* Center-align the text */
+    padding: 10px 0; /* Add padding for more spacing */
+    background-color: rgba(0, 0, 0, 0.8); /* Slightly darkened background to highlight */
+    border-radius: 8px; /* Rounded corners for a smoother look */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6); /* Add a subtle shadow for depth */
+    transition: all 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.track-meta:hover {
+    background-color: rgba(0, 0, 0, 0.9); /* Darken background on hover */
+    color: #ffffff; /* Change text to white on hover for better contrast */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8); /* Enhance shadow on hover */
+}
+
+/* Make album title stand out */
+.track-meta .album {
+    font-weight: 700; /* Bold text for album title */
+    display:block;
+    font-size: 1.1em; /* Slightly larger font for emphasis */
+    color: #1db954; /* Green color to make it pop */
+}
+
+/* Duration styling */
+.track-meta .duration {
+    font-size: 1.2em; /* Increase font size of duration */
+    display:block;
+    color: #f0f0f0; /* Light color for the duration */
+    margin-bottom: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .track-meta {
+        flex-direction: column;
+    }
+
+    .track-meta .album {
+        max-width: 200px;
+        margin-left: auto;
+        margin-right: auto;
+        justify-content: center;
+    }
+}
+
+  

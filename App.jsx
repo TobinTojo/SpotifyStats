@@ -50,6 +50,12 @@ const [trackImage, setTrackImage] = useState(null);
 const [trackSpotifyLink, setTrackSpotifyLink] = useState(null);
 
 
+const formatDuration = (ms) => {
+  const minutes = Math.floor(ms / 60000);
+  const seconds = ((ms % 60000) / 1000).toFixed(0);
+  return `${minutes}:${seconds.padStart(2, '0')}`;
+};
+
 const handleTrackClick = (track) => {
   // Get ranks across all time ranges
   const shortTermTracks = [...topTracks, ...topTracksSecondSet];
@@ -552,8 +558,22 @@ const closePopup = () => {
         alt={selectedTrack.name} 
         className="popup-track-img"
       />
+
       <div className="credited-artist">
-        by {selectedTrack.artists.map(artist => artist.name).join(", ")}
+        By {selectedTrack.artists.map(artist => artist.name).join(", ")}
+      </div>
+
+        {/* Add track duration */}
+        <div className="track-meta">
+        <span className="duration">
+          Duration: {formatDuration(selectedTrack.duration_ms)}
+        </span>
+        {/* Add album information if not a single */}
+        {selectedTrack.album.album_type !== 'single' && (
+          <span className="album">
+            Album: {selectedTrack.album.name}
+          </span>
+        )}
       </div>
 
       <div className="track-ranks">
@@ -587,7 +607,7 @@ const closePopup = () => {
         onClick={() => window.open(trackSpotifyLink, "_blank")}
       >
         <img 
-          src="./spotify_icon.png" 
+          src="./spotify_512_black.png" 
           alt="Spotify" 
           className="spotify-icon"
         />
@@ -699,46 +719,51 @@ const closePopup = () => {
             Visit Artist on Spotify
           </button>
 
-          {/* Bar Chart */}
-          <div className="chart-container">
-            <h3 className="chart-title">Number of Songs in Top 100</h3>
-            <ArtistSongChart data={[
-              { timeFrame: '4 Weeks', "Number of Songs": popupTracks ? popupTracks.length : 0 },
-              { timeFrame: '6 Months', "Number of Songs": popupTracksSixMonths ? popupTracksSixMonths.length : 0 },
-              { timeFrame: '1 Year', "Number of Songs": popupTracksYear ? popupTracksYear.length : 0 },
-            ]} />
-          </div>
+          {/* Check if the artist has tracks in any time range */}
+          {((popupTracks?.length ?? 0) > 0 || 
+            (popupTracksSixMonths?.length ?? 0) > 0 || 
+            (popupTracksYear?.length ?? 0) > 0) && (
+            <>
+              <div className="chart-container">
+                <h3 className="chart-title">Number of Songs in Top 100</h3>
+                <ArtistSongChart data={[
+                  { timeFrame: '4 Weeks', "Number of Songs": popupTracks ? popupTracks.length : 0 },
+                  { timeFrame: '6 Months', "Number of Songs": popupTracksSixMonths ? popupTracksSixMonths.length : 0 },
+                  { timeFrame: '1 Year', "Number of Songs": popupTracksYear ? popupTracksYear.length : 0 },
+                ]} />
+              </div>
 
-          {/* Dropdown for selecting time range */}
-          <div>
-            <label htmlFor="time-range-select">Filter by Time Range: </label>
-            <select
-              id="time-range-select"
-              value={selectedTimeRange}
-              onChange={handleTimeRangeChange}
-            >
-              <option value="short_term" disabled={!popupTracks || popupTracks.length === 0}>
-                Past 4 Weeks
-              </option>
-              <option
-                value="medium_term"
-                disabled={!popupTracksSixMonths || popupTracksSixMonths.length === 0}
-              >
-                Past 6 Months
-              </option>
-              <option
-                value="long_term"
-                disabled={!popupTracksYear || popupTracksYear.length === 0}
-              >
-                Past Year
-              </option>
-            </select>
-          </div>
-          
-          <div className="pie-chart-container">
-            <h3 className="chart-title">Album Distribution in Top 100</h3>
-            <AlbumPieChart data={getFilteredTracks()} selectedArtist={selectedArtist} />
-          </div>
+              <div>
+                <label htmlFor="time-range-select">Filter by Time Range: </label>
+                <select
+                  id="time-range-select"
+                  value={selectedTimeRange}
+                  onChange={handleTimeRangeChange}
+                >
+                  <option value="short_term" disabled={!popupTracks || popupTracks.length === 0}>
+                    Past 4 Weeks
+                  </option>
+                  <option
+                    value="medium_term"
+                    disabled={!popupTracksSixMonths || popupTracksSixMonths.length === 0}
+                  >
+                    Past 6 Months
+                  </option>
+                  <option
+                    value="long_term"
+                    disabled={!popupTracksYear || popupTracksYear.length === 0}
+                  >
+                    Past Year
+                  </option>
+                </select>
+              </div>
+              
+              <div className="pie-chart-container">
+                <h3 className="chart-title">Album Distribution in Top 100</h3>
+                <AlbumPieChart data={getFilteredTracks()} selectedArtist={selectedArtist} />
+              </div>
+            </>
+          )}
           
 
           {/* Check if no tracks in any of the time periods */}

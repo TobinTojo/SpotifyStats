@@ -323,4 +323,13 @@ footer:hover {
     .floating-note {
         font-size: 1.5rem;
     }
+
+    .default-message {
+      width: 200px;
+      justify-content: center;
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+    }
 }
