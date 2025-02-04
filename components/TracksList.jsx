@@ -1,6 +1,6 @@
 import React from "react";
 
-const TracksList = ({ tracks }) => {
+const TracksList = ({ tracks, onTrackClick }) => {
   if (!tracks || tracks.length === 0) {
     return <div>No tracks to display. Please submit your selection.</div>;
   }
@@ -46,9 +46,7 @@ const TracksList = ({ tracks }) => {
       {tracks.map((track, index) => (
         <a
           key={track.id}
-          href={track.external_urls.spotify}
-          target="_blank"
-          rel="noopener noreferrer"
+          onClick={() => onTrackClick(track)}
           className="track-item"
           style={getStyle(index)}
         >

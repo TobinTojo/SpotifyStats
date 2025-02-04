@@ -31,7 +31,7 @@
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-.popup-artist-img {
+.popup-artist-img, .popup-track-img {
     width: 150px;
     height: 150px;
     border-radius: 50%;
@@ -138,7 +138,7 @@
     transform: rotate(90deg) scale(0.9);
 }
 
-.artist-spotify-button {
+.artist-spotify-button, .track-spotify-button {
     background-color: #1db954;
     color: white;
     border: none;
@@ -154,12 +154,12 @@
     margin-bottom: 20px;
 }
 
-.artist-spotify-button:hover {
+.artist-spotify-button:hover, .track-spotify-button:hover {
     background-color: #1ed760;
 }
 
 /* Enhanced Spotify button effects */
-.artist-spotify-button {
+.artist-spotify-button, .track-spotify-button {
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
@@ -174,23 +174,23 @@
     gap: 10px;
 }
 
-.artist-spotify-button:hover {
+.artist-spotify-button:hover, .track-spotify-button:hover {
     background-position: right center;
     transform: scale(1.05) rotate(1deg);
     box-shadow: 0 5px 20px rgba(29, 185, 84, 0.4);
 }
 
-.artist-spotify-button:hover img {
+.artist-spotify-button:hover img, .track-spotify-button:hover img {
     transform: rotate(360deg);
     margin-right: 12px;
 }
 
-.artist-spotify-button img {
+.artist-spotify-button img, .track-spotify-button img {
     transition: all 0.5s ease;
 }
 
 /* Add shine effect on button */
-.artist-spotify-button:after {
+.artist-spotify-button:after, .track-spotify-button:after {
     content: '';
     position: absolute;
     top: -50%;
@@ -208,7 +208,7 @@
     transform: rotate(30deg);
 }
 
-.artist-spotify-button:hover:after {
+.artist-spotify-button:hover:after, .track-spotify-button:hover:after {
     left: 130%;
     transition: left 0.7s ease-in-out;
 }
@@ -253,13 +253,13 @@ select option {
     animation-delay: calc(var(--index) * 0.08s);
 }
 
-.genre-section {
+.genre-section, .credited-artist {
     margin: 15px 0;
     font-size: 16px;
     color: #b3b3b3;
 }
 
-.genre-section strong {
+.genre-section strong, .credited-artist strong {
     color: #fff;
     margin-right: 8px;
 }
@@ -331,7 +331,7 @@ select option {
 }
 
 /* popup.css Updates */
-.artist-ranks {
+.artist-ranks, .track-ranks {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
@@ -456,6 +456,3 @@ select option {
     display: inline-block;
     min-width: 40px;
   }
-
-  
-  

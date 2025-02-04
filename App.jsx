@@ -42,6 +42,34 @@ const [topTracksSixMonthsSecondSet, setTopTracksSixMonthsSecondSet] = useState([
 const [topTracksYearSecondSet, setTopTracksYearSecondSet] = useState([]); // Tracks 51-100 for past year
 const [isLoading, setIsLoading] = useState(false); // Add this with other state declarations
 
+const [selectedTrack, setSelectedTrack] = useState(null);
+const [trackRankShort, setTrackRankShort] = useState(null);
+const [trackRankMedium, setTrackRankMedium] = useState(null);
+const [trackRankLong, setTrackRankLong] = useState(null);
+const [trackImage, setTrackImage] = useState(null);
+const [trackSpotifyLink, setTrackSpotifyLink] = useState(null);
+
+
+const handleTrackClick = (track) => {
+  // Get ranks across all time ranges
+  const shortTermTracks = [...topTracks, ...topTracksSecondSet];
+  const mediumTermTracks = [...topTracksSixMonths, ...topTracksSixMonthsSecondSet];
+  const longTermTracks = [...topTracksYear, ...topTracksYearSecondSet];
+
+  const getRank = (trackList, targetId) => {
+    const index = trackList.findIndex(t => t.id === targetId);
+    return index !== -1 ? index + 1 : null;
+  };
+
+  setTrackRankShort(getRank(shortTermTracks, track.id));
+  setTrackRankMedium(getRank(mediumTermTracks, track.id));
+  setTrackRankLong(getRank(longTermTracks, track.id));
+  
+  setTrackImage(track.album.images[0]?.url);
+  setTrackSpotifyLink(track.external_urls.spotify);
+  setSelectedTrack(track);
+};
+
     // Reset data when mode changes
     useEffect(() => {
       setData([]); // Clear the artist/track list when toggling modes
@@ -86,7 +114,7 @@ const [isLoading, setIsLoading] = useState(false); // Add this with other state 
             onSubmit={handleSubmit}
           />
           {statType === "tracks" ? (
-            <TracksList tracks={data} />
+            <TracksList tracks={data} onTrackClick={handleTrackClick} />
           ) : (
             <ArtistsList
               artists={data}
@@ -414,6 +442,19 @@ const getAvailableTimeRanges = () => {
     }
   };
 
+
+  const getRankClass = (rank) => {
+    if (rank === 1) return 'rank-label-1';
+    if (rank === 2) return 'rank-label-2';
+    if (rank === 3) return 'rank-label-3';
+    return '';
+  };
+  
+  const getSuffix = (number) => {
+    if (number > 3) return 'th';
+    return ['st', 'nd', 'rd'][number - 1];
+  };
+
 const closePopup = () => {
   const overlay = document.querySelector('.popup-overlay');
   const content = document.querySelector('.popup-content');
@@ -500,6 +541,61 @@ const closePopup = () => {
         </div>
       )}
       <Footer />
+
+      {selectedTrack && (
+  <div className="popup-overlay">
+    <div className="popup-content">
+      <button className="close-popup" onClick={() => setSelectedTrack(null)}>×</button>
+      <h1>{selectedTrack.name}</h1>
+      <img 
+        src={trackImage} 
+        alt={selectedTrack.name} 
+        className="popup-track-img"
+      />
+      <div className="credited-artist">
+        by {selectedTrack.artists.map(artist => artist.name).join(", ")}
+      </div>
+
+      <div className="track-ranks">
+        <div className="rank-card">
+          <div className="rank-header">4 Week Rank</div>
+          <div className={`rank-value ${getRankClass(trackRankShort)}`}>
+            {trackRankShort || <span className="na">&gt;100</span>}
+            {trackRankShort && <span className="rank-suffix">{getSuffix(trackRankShort)}</span>}
+          </div>
+        </div>
+
+        <div className="rank-card">
+          <div className="rank-header">6 Month Rank</div>
+          <div className={`rank-value ${getRankClass(trackRankMedium)}`}>
+            {trackRankMedium || <span className="na">&gt;100</span>}
+            {trackRankMedium && <span className="rank-suffix">{getSuffix(trackRankMedium)}</span>}
+          </div>
+        </div>
+
+        <div className="rank-card">
+          <div className="rank-header">1 Year Rank</div>
+          <div className={`rank-value ${getRankClass(trackRankLong)}`}>
+            {trackRankLong || <span className="na">&gt;100</span>}
+            {trackRankLong && <span className="rank-suffix">{getSuffix(trackRankLong)}</span>}
+          </div>
+        </div>
+      </div>
+
+      <button 
+        className="track-spotify-button"
+        onClick={() => window.open(trackSpotifyLink, "_blank")}
+      >
+        <img 
+          src="./spotify_icon.png" 
+          alt="Spotify" 
+          className="spotify-icon"
+        />
+        Play on Spotify
+      </button>
+    </div>
+  </div>
+)}
 
       {selectedArtist && (
   <div className="popup-overlay">
@@ -704,7 +800,10 @@ const closePopup = () => {
                   const { trackStyle, nameStyle } = getTrackStyle(index);
 
                   return (
-                    <div key={track.id} className="track-item" style={trackStyle}>
+                    <div key={track.id} className="track-item" style={trackStyle}  onClick={() => {
+                      handleTrackClick(track);
+                      closePopup(); // Close artist popup when clicking track
+                    }}>
                       <div className="track-number" style={{ color: trackStyle.color }}>
                         {globalRank ? `${globalRank}.` : "N/A"}
                       </div>
