@@ -2,7 +2,7 @@ import React from "react";
 
 const Login = () => {
   const clientId = import.meta.env.VITE_SPOTIFY_API_KEY;
-  const redirectUri = "http://localhost:5173";
+  const redirectUri = "https://mystatify.netlify.app";
   const scopes = [
     "user-read-private",
     "user-read-email",

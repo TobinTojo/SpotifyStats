@@ -38,8 +38,17 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [mode, setMode] = useState("topStats"); // New state for mode: "topStats" or "search"
   const [topTracksSecondSet, setTopTracksSecondSet] = useState([]); // Tracks 51-100 for past 4 weeks
-const [topTracksSixMonthsSecondSet, setTopTracksSixMonthsSecondSet] = useState([]); // Tracks 51-100 for 6 months
+const [topTracksSixMonthsSecondSet, setTopTracksSixMonthsSecondSet] = useState([]); // Tracks 101-150 for 6 months
 const [topTracksYearSecondSet, setTopTracksYearSecondSet] = useState([]); // Tracks 51-100 for past year
+const [topTracksThirdSet, setTopTracksThirdSet] = useState([]); // Tracks 101-150 for past 4 weeks
+const [topTracksFourthSet, setTopTracksFourthSet] = useState([]); // Tracks 151-200 for past 4 weeks
+const [topTracksFifthSet, setTopTracksFifthSet] = useState([]); // Tracks 201-250 for past 4 weeks
+const [topTracksSixMonthsThirdSet, setTopTracksSixMonthsThirdSet] = useState([]); // Tracks 101-150 for 6 months
+const [topTracksSixMonthsFourthSet, setTopTracksSixMonthsFourthSet] = useState([]); // Tracks 151-200 for 6 months
+const [topTracksSixMonthsFifthSet, setTopTracksSixMonthsFifthSet] = useState([]); // Tracks 201-250 for 6 months
+const [topTracksYearThirdSet, setTopTracksYearThirdSet] = useState([]); // Tracks 101-150 for past year
+const [topTracksYearFourthSet, setTopTracksYearFourthSet] = useState([]); // Tracks 151-200 for past year
+const [topTracksYearFifthSet, setTopTracksYearFifthSet] = useState([]); // Tracks 201-250 for past year
 const [isLoading, setIsLoading] = useState(false); // Add this with other state declarations
 
 const [selectedTrack, setSelectedTrack] = useState(null);
@@ -62,9 +71,9 @@ const handleTrackClick = (track) => {
   // Get ranks across all time ranges from ALL available tracks
   const getAllTracks = (timeRange) => {
     switch(timeRange) {
-      case "short_term": return [...topTracks, ...topTracksSecondSet];
-      case "medium_term": return [...topTracksSixMonths, ...topTracksSixMonthsSecondSet];
-      case "long_term": return [...topTracksYear, ...topTracksYearSecondSet];
+      case "short_term": return [...topTracks, ...topTracksSecondSet, ...topTracksThirdSet, ...topTracksFourthSet, ...topTracksFifthSet];
+      case "medium_term": return [...topTracksSixMonths, ...topTracksSixMonthsSecondSet, ...topTracksSixMonthsThirdSet, ...topTracksSixMonthsFourthSet, ...topTracksSixMonthsFifthSet];
+      case "long_term": return [...topTracksYear, ...topTracksYearSecondSet, ...topTracksYearThirdSet, ...topTracksYearFourthSet, ...topTracksYearFifthSet];
       default: return [];
     }
   };
@@ -90,17 +99,35 @@ useEffect(() => {
     if (accessToken) {
       const shortTerm = await fetchTopTracks(0);
       const shortTermSecond = await fetchTopTracks(50);
+      const shortTermThird = await fetchTopTracks(100);
+      const shortTermFourth = await fetchTopTracks(150);
+      const shortTermFifth = await fetchTopTracks(200);
       const sixMonths = await fetchTopTracksLastSixMonths(0);
       const sixMonthsSecond = await fetchTopTracksLastSixMonths(50);
+      const sixMonthsThird = await fetchTopTracksLastSixMonths(100);
+      const sixMonthsFourth = await fetchTopTracksLastSixMonths(150);
+      const sixMonthsFifth = await fetchTopTracksLastSixMonths(200);
       const year = await fetchTopTracksYear(0);
       const yearSecond = await fetchTopTracksYear(50);
+      const yearThird = await fetchTopTracksYear(100);
+      const yearFourth = await fetchTopTracksYear(150);
+      const yearFifth = await fetchTopTracksYear(200);
 
       setTopTracks(shortTerm);
       setTopTracksSecondSet(shortTermSecond);
+      setTopTracksThirdSet(shortTermThird);
+      setTopTracksFourthSet(shortTermFourth);
+      setTopTracksFifthSet(shortTermFifth);
       setTopTracksSixMonths(sixMonths);
       setTopTracksSixMonthsSecondSet(sixMonthsSecond);
+      setTopTracksSixMonthsThirdSet(sixMonthsThird);
+      setTopTracksSixMonthsFourthSet(sixMonthsFourth);
+      setTopTracksSixMonthsFifthSet(sixMonthsFifth);
       setTopTracksYear(year);
       setTopTracksYearSecondSet(yearSecond);
+      setTopTracksYearThirdSet(yearThird);
+      setTopTracksYearFourthSet(yearFourth);
+      setTopTracksYearFifthSet(yearFifth);
     }
   };
   loadAllTracks();
@@ -431,7 +458,10 @@ const getAvailableTimeRanges = () => {
       // --- Past 4 Weeks ---
       const shortTermFirstSet = await fetchTopTracks(0);
       const shortTermSecondSet = await fetchTopTracks(50);
-      const allShortTermTracks = [...shortTermFirstSet, ...shortTermSecondSet];
+      const shortTermThirdSet = await fetchTopTracks(100);
+      const shortTermFourthSet = await fetchTopTracks(150);
+      const shortTermFifthSet = await fetchTopTracks(200);
+      const allShortTermTracks = [...shortTermFirstSet, ...shortTermSecondSet, ...shortTermThirdSet, ...shortTermFourthSet, ...shortTermFifthSet];
       // Filter by artist
       const artistShortTermTracks = allShortTermTracks.filter((track) =>
         track.artists.some((a) => a.id === artistId)
@@ -440,7 +470,10 @@ const getAvailableTimeRanges = () => {
       // --- Past 6 Months ---
       const sixMonthsFirstSet = await fetchTopTracksLastSixMonths(0);
       const sixMonthsSecondSet = await fetchTopTracksLastSixMonths(50);
-      const allSixMonthsTracks = [...sixMonthsFirstSet, ...sixMonthsSecondSet];
+      const sixMonthsThirdSet = await fetchTopTracksLastSixMonths(100);
+      const sixMonthsFourthSet = await fetchTopTracksLastSixMonths(150);
+      const sixMonthsFifthSet = await fetchTopTracksLastSixMonths(200);
+      const allSixMonthsTracks = [...sixMonthsFirstSet, ...sixMonthsSecondSet, ...sixMonthsThirdSet, ...sixMonthsFourthSet, ...sixMonthsFifthSet];
       // Filter by artist
       const artistSixMonthsTracks = allSixMonthsTracks.filter((track) =>
         track.artists.some((a) => a.id === artistId)
@@ -449,7 +482,10 @@ const getAvailableTimeRanges = () => {
       // --- Past Year ---
       const yearFirstSet = await fetchTopTracksYear(0);
       const yearSecondSet = await fetchTopTracksYear(50);
-      const allYearTracks = [...yearFirstSet, ...yearSecondSet];
+      const yearThirdSet = await fetchTopTracksYear(100);
+      const yearFourthSet = await fetchTopTracksYear(150);
+      const yearFifthSet = await fetchTopTracksYear(200);
+      const allYearTracks = [...yearFirstSet, ...yearSecondSet, ...yearThirdSet, ...yearFourthSet, ...yearFifthSet];
       // Filter by artist
       const artistYearTracks = allYearTracks.filter((track) =>
         track.artists.some((a) => a.id === artistId)
@@ -468,10 +504,19 @@ const getAvailableTimeRanges = () => {
       // Store unfiltered track sets for rank calculation
       setTopTracks(shortTermFirstSet);
       setTopTracksSecondSet(shortTermSecondSet);
+      setTopTracksThirdSet(shortTermThirdSet);
+      setTopTracksFourthSet(shortTermFourthSet);
+      setTopTracksFifthSet(shortTermFifthSet);
       setTopTracksSixMonths(sixMonthsFirstSet);
       setTopTracksSixMonthsSecondSet(sixMonthsSecondSet);
+      setTopTracksSixMonthsThirdSet(sixMonthsThirdSet);
+      setTopTracksSixMonthsFourthSet(sixMonthsFourthSet);
+      setTopTracksSixMonthsFifthSet(sixMonthsFifthSet);
       setTopTracksYear(yearFirstSet);
       setTopTracksYearSecondSet(yearSecondSet);
+      setTopTracksYearThirdSet(yearThirdSet);
+      setTopTracksYearFourthSet(yearFourthSet);
+      setTopTracksYearFifthSet(yearFifthSet);
   
       setSelectedArtist(artistName);
     } catch (error) {
@@ -655,7 +700,7 @@ const closePopup = () => {
         <div className="rank-card">
           <div className="rank-header">4 Week Rank</div>
           <div className={`rank-value ${getRankClass(trackRankShort)}`}>
-            {trackRankShort || <span className="na">&gt;100</span>}
+            {trackRankShort || <span className="na">&gt;250</span>}
             {trackRankShort && <span className="rank-suffix">{getSuffix(trackRankShort)}</span>}
           </div>
         </div>
@@ -663,7 +708,7 @@ const closePopup = () => {
         <div className="rank-card">
           <div className="rank-header">6 Month Rank</div>
           <div className={`rank-value ${getRankClass(trackRankMedium)}`}>
-            {trackRankMedium || <span className="na">&gt;100</span>}
+            {trackRankMedium || <span className="na">&gt;250</span>}
             {trackRankMedium && <span className="rank-suffix">{getSuffix(trackRankMedium)}</span>}
           </div>
         </div>
@@ -671,7 +716,7 @@ const closePopup = () => {
         <div className="rank-card">
           <div className="rank-header">1 Year Rank</div>
           <div className={`rank-value ${getRankClass(trackRankLong)}`}>
-            {trackRankLong || <span className="na">&gt;100</span>}
+            {trackRankLong || <span className="na">&gt;250</span>}
             {trackRankLong && <span className="rank-suffix">{getSuffix(trackRankLong)}</span>}
           </div>
         </div>
@@ -736,7 +781,7 @@ const closePopup = () => {
                 artistRankShort === 2 ? 'rank-label-2' :
                 artistRankShort === 3 ? 'rank-label-3' : ''
               }`}>
-                {artistRankShort !== null ? artistRankShort : <span className="na">&gt;100</span>}
+                {artistRankShort !== null ? artistRankShort : <span className="na">&gt;250</span>}
                 {artistRankShort && (
                   <span className="rank-suffix">
                     {artistRankShort === 1 ? 'st' :
@@ -753,7 +798,7 @@ const closePopup = () => {
                 artistRankMedium === 2 ? 'rank-label-2' :
                 artistRankMedium === 3 ? 'rank-label-3' : ''
               }`}>
-                {artistRankMedium !== null ? artistRankMedium : <span className="na">&gt;100</span>}
+                {artistRankMedium !== null ? artistRankMedium : <span className="na">&gt;250</span>}
                 {artistRankMedium && (
                   <span className="rank-suffix">
                     {artistRankMedium === 1 ? 'st' :
@@ -770,7 +815,7 @@ const closePopup = () => {
                 artistRankLong === 2 ? 'rank-label-2' :
                 artistRankLong === 3 ? 'rank-label-3' : ''
               }`}>
-                {artistRankLong !== null ? artistRankLong : <span className="na">&gt;100</span>}
+                {artistRankLong !== null ? artistRankLong : <span className="na">&gt;250</span>}
                 {artistRankLong && (
                   <span className="rank-suffix">
                     {artistRankLong === 1 ? 'st' :
@@ -801,7 +846,7 @@ const closePopup = () => {
             (popupTracksYear?.length ?? 0) > 0) && (
             <>
               <div className="chart-container">
-                <h3 className="chart-title">Number of Songs in Top 100</h3>
+                <h3 className="chart-title">Number of Songs in Top 250</h3>
                 <ArtistSongChart data={[
                   { timeFrame: '4 Weeks', "Number of Songs": popupTracks ? popupTracks.length : 0 },
                   { timeFrame: '6 Months', "Number of Songs": popupTracksSixMonths ? popupTracksSixMonths.length : 0 },
@@ -835,7 +880,7 @@ const closePopup = () => {
               </div>
               
               <div className="pie-chart-container">
-                <h3 className="chart-title">Album Distribution in Top 100</h3>
+                <h3 className="chart-title">Album Distribution in Top 250</h3>
                 <AlbumPieChart data={getFilteredTracks()} selectedArtist={selectedArtist} />
               </div>
             </>
@@ -848,7 +893,7 @@ const closePopup = () => {
             (popupTracksSixMonths && popupTracksSixMonths.length === 0) &&
             (popupTracksYear && popupTracksYear.length === 0)
           ) ? (
-            <p>No tracks by {selectedArtist} in the top 100 from the past 4 weeks, 6 months, or the past year</p>
+            <p>No tracks by {selectedArtist} in the top 250 from the past 4 weeks, 6 months, or the past year</p>
           ) : (
             <>
               <h3>Your Top Tracks Featuring {selectedArtist}</h3>
@@ -873,9 +918,24 @@ const closePopup = () => {
                         // Check next 50 tracks
                         const secondSetIndex = topTracksSecondSet.findIndex((t) => t.id === track.id);
                         if (secondSetIndex !== -1) globalRank = secondSetIndex + 51;
+                        else {
+                          // Check next 50 tracks
+                          const thirdSetIndex = topTracksThirdSet.findIndex((t) => t.id === track.id);
+                          if (thirdSetIndex !== -1) globalRank = thirdSetIndex + 101;
+                          else {
+                            // Check next 50 tracks (fourth set)
+                            const fourthSetIndex = topTracksFourthSet.findIndex((t) => t.id === track.id);
+                            if (fourthSetIndex !== -1) globalRank = fourthSetIndex + 151;
+                            else {
+                              // Check next 50 tracks (fifth set)
+                              const fifthSetIndex = topTracksFifthSet.findIndex((t) => t.id === track.id);
+                              if (fifthSetIndex !== -1) globalRank = fifthSetIndex + 201;
+                            }
+                          }
+                        }
                       }
                       break;
-
+                  
                     case "medium_term":
                       const mediumTermIndex = topTracksSixMonths.findIndex((t) => t.id === track.id);
                       if (mediumTermIndex !== -1) {
@@ -883,9 +943,23 @@ const closePopup = () => {
                       } else {
                         const secondSetIndex = topTracksSixMonthsSecondSet.findIndex((t) => t.id === track.id);
                         if (secondSetIndex !== -1) globalRank = secondSetIndex + 51;
+                        else {
+                          const thirdSetIndex = topTracksSixMonthsThirdSet.findIndex((t) => t.id === track.id);
+                          if (thirdSetIndex !== -1) globalRank = thirdSetIndex + 101;
+                          else {
+                            // Check next 50 tracks (fourth set)
+                            const fourthSetIndex = topTracksSixMonthsFourthSet.findIndex((t) => t.id === track.id);
+                            if (fourthSetIndex !== -1) globalRank = fourthSetIndex + 151;
+                            else {
+                              // Check next 50 tracks (fifth set)
+                              const fifthSetIndex = topTracksSixMonthsFifthSet.findIndex((t) => t.id === track.id);
+                              if (fifthSetIndex !== -1) globalRank = fifthSetIndex + 201;
+                            }
+                          }
+                        }
                       }
                       break;
-
+                  
                     case "long_term":
                       const longTermIndex = topTracksYear.findIndex((t) => t.id === track.id);
                       if (longTermIndex !== -1) {
@@ -893,9 +967,24 @@ const closePopup = () => {
                       } else {
                         const secondSetIndex = topTracksYearSecondSet.findIndex((t) => t.id === track.id);
                         if (secondSetIndex !== -1) globalRank = secondSetIndex + 51;
+                        else {
+                          const thirdSetIndex = topTracksYearThirdSet.findIndex((t) => t.id === track.id);
+                          if (thirdSetIndex !== -1) globalRank = thirdSetIndex + 101;
+                          else {
+                            // Check next 50 tracks (fourth set)
+                            const fourthSetIndex = topTracksYearFourthSet.findIndex((t) => t.id === track.id);
+                            if (fourthSetIndex !== -1) globalRank = fourthSetIndex + 151;
+                            else {
+                              // Check next 50 tracks (fifth set)
+                              const fifthSetIndex = topTracksYearFifthSet.findIndex((t) => t.id === track.id);
+                              if (fifthSetIndex !== -1) globalRank = fifthSetIndex + 201;
+                            }
+                          }
+                        }
                       }
                       break;
                   }
+                  
 
                   // Track style logic remains the same
                   const { trackStyle, nameStyle } = getTrackStyle(index);
