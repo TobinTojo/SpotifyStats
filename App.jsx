@@ -49,6 +49,7 @@ const [trackRankLong, setTrackRankLong] = useState(null);
 const [trackImage, setTrackImage] = useState(null);
 const [trackSpotifyLink, setTrackSpotifyLink] = useState(null);
 
+const [searchType, setSearchType] = useState("artist"); // Add this with other state declarations
 
 const formatDuration = (ms) => {
   const minutes = Math.floor(ms / 60000);
@@ -56,25 +57,60 @@ const formatDuration = (ms) => {
   return `${minutes}:${seconds.padStart(2, '0')}`;
 };
 
+// Modify the handleTrackClick function to handle search tracks
 const handleTrackClick = (track) => {
-  // Get ranks across all time ranges
-  const shortTermTracks = [...topTracks, ...topTracksSecondSet];
-  const mediumTermTracks = [...topTracksSixMonths, ...topTracksSixMonthsSecondSet];
-  const longTermTracks = [...topTracksYear, ...topTracksYearSecondSet];
+  // Get ranks across all time ranges from ALL available tracks
+  const getAllTracks = (timeRange) => {
+    switch(timeRange) {
+      case "short_term": return [...topTracks, ...topTracksSecondSet];
+      case "medium_term": return [...topTracksSixMonths, ...topTracksSixMonthsSecondSet];
+      case "long_term": return [...topTracksYear, ...topTracksYearSecondSet];
+      default: return [];
+    }
+  };
 
   const getRank = (trackList, targetId) => {
     const index = trackList.findIndex(t => t.id === targetId);
     return index !== -1 ? index + 1 : null;
   };
 
-  setTrackRankShort(getRank(shortTermTracks, track.id));
-  setTrackRankMedium(getRank(mediumTermTracks, track.id));
-  setTrackRankLong(getRank(longTermTracks, track.id));
-  
+  // Get ranks for all time ranges
+  setTrackRankShort(getRank(getAllTracks("short_term"), track.id));
+  setTrackRankMedium(getRank(getAllTracks("medium_term"), track.id));
+  setTrackRankLong(getRank(getAllTracks("long_term"), track.id));
+
   setTrackImage(track.album.images[0]?.url);
   setTrackSpotifyLink(track.external_urls.spotify);
   setSelectedTrack(track);
 };
+
+// Add this useEffect to load top tracks on mount
+useEffect(() => {
+  const loadAllTracks = async () => {
+    if (accessToken) {
+      const shortTerm = await fetchTopTracks(0);
+      const shortTermSecond = await fetchTopTracks(50);
+      const sixMonths = await fetchTopTracksLastSixMonths(0);
+      const sixMonthsSecond = await fetchTopTracksLastSixMonths(50);
+      const year = await fetchTopTracksYear(0);
+      const yearSecond = await fetchTopTracksYear(50);
+
+      setTopTracks(shortTerm);
+      setTopTracksSecondSet(shortTermSecond);
+      setTopTracksSixMonths(sixMonths);
+      setTopTracksSixMonthsSecondSet(sixMonthsSecond);
+      setTopTracksYear(year);
+      setTopTracksYearSecondSet(yearSecond);
+    }
+  };
+  loadAllTracks();
+}, [accessToken]);
+
+// Add this useEffect to reset search results when changing search type
+useEffect(() => {
+  setData([]);
+  setSearchQuery("");
+}, [searchType]);
 
     // Reset data when mode changes
     useEffect(() => {
@@ -87,21 +123,28 @@ const handleTrackClick = (track) => {
     setData([]); // Clear data when switching modes
   };
 
- // Function to handle search
   const handleSearch = async (query) => {
     if (!query) return;
-
+  
+    // Capture the current searchType when the request is made
+    const currentSearchType = searchType;
+  
     try {
       const response = await fetch(
-        `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=artist&limit=10`,
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=${currentSearchType}&limit=10`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
       const data = await response.json();
-      setData(data.artists.items); // Update the data state with search results
+      // Safely access items with optional chaining and default to empty array
+      const items = currentSearchType === "artist" 
+        ? data.artists?.items || [] 
+        : data.tracks?.items || [];
+      setData(items);
     } catch (error) {
-      console.error("Failed to search artists:", error);
+      console.error("Failed to search:", error);
+      setData([]); // Reset data on error
     }
   };
 
@@ -139,19 +182,38 @@ const handleTrackClick = (track) => {
               handleSearch(searchQuery);
             }}
           >
-            <input
-              type="text"
-              placeholder="Search for an artist..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button type="submit">Search</button>
+            <div className="search-controls">
+              <select 
+                value={searchType} 
+                onChange={(e) => setSearchType(e.target.value)}
+                className="search-type-select"
+              >
+                <option value="artist">Artists</option>
+                <option value="track">Tracks</option>
+              </select>
+              <input
+                type="text"
+                placeholder={`Search for ${searchType === "artist" ? "an artist..." : "a track..."}`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+              <button type="submit" className="search-button">Search</button>
+            </div>
           </form>
-          <ArtistsList
-            artists={data}
-            onArtistClick={handleArtistClick}
-            isSearchMode={true} // In search mode
-          />
+          {searchType === "artist" ? (
+            <ArtistsList
+              artists={data}
+              onArtistClick={handleArtistClick}
+              isSearchMode={true}
+            />
+          ) : (
+            <TracksList 
+              tracks={data} 
+              onTrackClick={handleTrackClick} 
+              isSearchMode={true}
+            />
+          )}
         </div>
       );
     }
@@ -622,6 +684,7 @@ const closePopup = () => {
         <img 
           src="./spotify_512_black.png" 
           alt="Spotify" 
+          style={{ width: "28px", marginRight: "8px" }} 
           className="spotify-icon"
         />
         Play on Spotify

@@ -1,6 +1,6 @@
 import React from "react";
 
-const ArtistsList = ({ artists, onArtistClick, isSearchMode }) => {
+const ArtistsList = ({ artists = [], onArtistClick, isSearchMode }) => {
   if (!artists || artists.length === 0) {
     return <div>No artists to display. Please submit your selection.</div>;
   }
@@ -77,7 +77,9 @@ const ArtistsList = ({ artists, onArtistClick, isSearchMode }) => {
               {artist.name}
             </strong>
             <br />
-            <span>Followers: {artist.followers.total.toLocaleString()}</span>
+            <span>
+              Followers: {artist.followers?.total?.toLocaleString() ?? "N/A"}
+            </span>
             <br />
             <span>Popularity: {artist.popularity}</span>
           </div>

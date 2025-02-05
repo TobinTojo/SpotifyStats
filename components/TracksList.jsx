@@ -1,12 +1,17 @@
 import React from "react";
 
-const TracksList = ({ tracks, onTrackClick }) => {
+const TracksList = ({ tracks = [], onTrackClick, isSearchMode }) => {
+  // Safeguard in case tracks is empty or undefined
   if (!tracks || tracks.length === 0) {
     return <div>No tracks to display. Please submit your selection.</div>;
   }
 
-  // Define styles for the top 3 and others
+  // Define styles for the top 3 and others (only if not in search mode)
   const getStyle = (index) => {
+    if (isSearchMode) {
+      return { backgroundColor: "#181818" }; // Default style for search mode
+    }
+
     if (index === 0) {
       return {
         color: "gold",
@@ -34,15 +39,22 @@ const TracksList = ({ tracks, onTrackClick }) => {
     return { backgroundColor: "#181818" }; // Default for others
   };
 
-  const getFontWeight = (index) => (index < 3 ? "bold" : "normal");
+  const getFontWeight = (index) => (index < 3 && !isSearchMode ? "bold" : "normal");
 
   return (
     <div id="tracks-container">
-      <h2>Leaderboard</h2>
-      <div className="click-hint">
-        Click any track to listen on Spotify
-        <span className="pulsating-arrow">→</span>
-      </div>
+      {!isSearchMode && <h2>Leaderboard</h2>}
+      {isSearchMode && tracks.length === 0 && (
+        <div>No tracks found. Try a different search.</div>
+      )}
+
+      {!isSearchMode && tracks.length > 0 && (
+        <div className="click-hint">
+          Click any track to listen on Spotify
+          <span className="pulsating-arrow">→</span>
+        </div>
+      )}
+
       {tracks.map((track, index) => (
         <a
           key={track.id}
@@ -50,12 +62,15 @@ const TracksList = ({ tracks, onTrackClick }) => {
           className="track-item"
           style={getStyle(index)}
         >
-          <div
-            className="track-number"
-            style={{ color: getStyle(index).color, fontWeight: getFontWeight(index) }}
-          >
-            {index + 1}. {/* Display rank */}
-          </div>
+          {/* Only show rank number if not in search mode */}
+          {!isSearchMode && (
+            <div
+              className="track-number"
+              style={{ color: getStyle(index).color, fontWeight: getFontWeight(index) }}
+            >
+              {index + 1}. {/* Display rank */}
+            </div>
+          )}
           <img
             className="track-image"
             src={track.album?.images?.[2]?.url || track.album?.images?.[0]?.url || ""}
@@ -68,21 +83,21 @@ const TracksList = ({ tracks, onTrackClick }) => {
               {track.name}
             </strong>
             <br />
-            <span>by {track.artists.map((artist) => artist.name).join(", ")}</span>
+            <span>by {track.artists?.map((artist) => artist.name).join(", ")}</span>
             <br />
             <span>Popularity: {track.popularity}</span>
           </div>
           {/* Add click indicator */}
           <div className="click-indicator">
-            <svg 
-              width="24" 
-              height="24" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
               strokeWidth="2"
             >
-              <path d="M9 18l6-6-6-6"/>
+              <path d="M9 18l6-6-6-6" />
             </svg>
           </div>
         </a>
