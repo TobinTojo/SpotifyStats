@@ -13,6 +13,7 @@ import "./styles/popup.css";
 import "./styles/custombarchart.css";
 import ArtistSongChart from './components/ArtistSongChart';
 import AlbumPieChart from './components/AlbumPieChart';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const App = () => {
   const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken") || null);
@@ -60,10 +61,153 @@ const [trackSpotifyLink, setTrackSpotifyLink] = useState(null);
 
 const [searchType, setSearchType] = useState("artist"); // Add this with other state declarations
 
+const [quizQuestions, setQuizQuestions] = useState([]); // Stores the quiz questions
+const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // Tracks the current question
+const [quizScore, setQuizScore] = useState(0); // Tracks the user's score
+const [isQuizActive, setIsQuizActive] = useState(false); // Tracks if the quiz is active
+const [userAnswer, setUserAnswer] = useState(""); // Tracks the user's answer
+const [showQuizResult, setShowQuizResult] = useState(false); // Tracks if the quiz result is shown
+
+const genAI = new GoogleGenerativeAI('AIzaSyBKTyvCaSFo-OdMvWAJ7JOx4nt0Bb5Kn-M');
+
 const formatDuration = (ms) => {
   const minutes = Math.floor(ms / 60000);
   const seconds = ((ms % 60000) / 1000).toFixed(0);
   return `${minutes}:${seconds.padStart(2, '0')}`;
+};
+
+const generateQuizQuestions = async () => {
+  try {
+    // Helper function to get all tracks with ranks for a time range
+    const getAllTracksWithRanks = (timeRange) => {
+      let tracks = [];
+      switch(timeRange) {
+        case 'short_term':
+          tracks = [
+            ...topTracks,
+            ...topTracksSecondSet,
+            ...topTracksThirdSet,
+            ...topTracksFourthSet,
+            ...topTracksFifthSet
+          ];
+          break;
+        case 'medium_term':
+          tracks = [
+            ...topTracksSixMonths,
+            ...topTracksSixMonthsSecondSet,
+            ...topTracksSixMonthsThirdSet,
+            ...topTracksSixMonthsFourthSet,
+            ...topTracksSixMonthsFifthSet
+          ];
+          break;
+        case 'long_term':
+          tracks = [
+            ...topTracksYear,
+            ...topTracksYearSecondSet,
+            ...topTracksYearThirdSet,
+            ...topTracksYearFourthSet,
+            ...topTracksYearFifthSet
+          ];
+          break;
+        default:
+          tracks = [];
+      }
+      return tracks.map((track, index) => ({
+        ...track,
+        rank: index + 1
+      }));
+    };
+
+    // Helper function to determine rank range
+    const getRankRange = (rank) => {
+      if (rank <= 10) return 'Top 10';
+      if (rank <= 25) return '11-25';
+      if (rank <= 50) return '26-50';
+      if (rank <= 100) return '51-100';
+      if (rank <= 250) return '101-250';
+      return 'Not in Top 250';
+    };
+
+    // Generate plausible answer options
+    const generateOptions = (correctRange) => {
+      const possibleRanges = ['Top 10', '11-25', '26-50', '51-100', '101-250', 'Not in Top 250'];
+      const incorrectRanges = possibleRanges.filter(range => range !== correctRange);
+      const shuffledIncorrect = incorrectRanges.sort(() => 0.5 - Math.random()).slice(0, 3);
+      const options = [...shuffledIncorrect, correctRange];
+      return options.sort(() => 0.5 - Math.random());
+    };
+
+    // Get tracks from all time ranges
+    const timeRanges = [
+      { id: 'short_term', label: '4 weeks' },
+      { id: 'medium_term', label: '6 months' },
+      { id: 'long_term', label: '1 year' }
+    ];
+
+    // Collect all possible questions
+    const questions = [];
+    
+    timeRanges.forEach(({ id, label }) => {
+      const tracks = getAllTracksWithRanks(id);
+      tracks.forEach(track => {
+        const correctRange = getRankRange(track.rank);
+        questions.push({
+          type: 'trackRank',
+          question: `In the last ${label}, where does ${track.name} place?`,
+          correctAnswer: correctRange,
+          options: generateOptions(correctRange)
+        });
+      });
+    });
+
+    // Shuffle and select up to 10 unique questions
+    const uniqueQuestions = Array.from(new Set(questions.map(q => q.question)))
+      .map(question => questions.find(q => q.question === question));
+
+    setQuizQuestions(
+      uniqueQuestions
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 10)
+    );
+
+  } catch (error) {
+    console.error("Failed to generate quiz questions:", error);
+    setQuizQuestions([]);
+  }
+};
+
+const startQuiz = async () => {
+  setIsLoading(true);
+  await generateQuizQuestions();
+  setIsLoading(false);
+  
+  if (quizQuestions.length > 0) {
+    setCurrentQuestionIndex(0);
+    setQuizScore(0);
+    setShowQuizResult(false);
+    setIsQuizActive(true);
+  } else {
+    console.error("No quiz questions available.");
+    // Handle error state
+  }
+};
+const handleAnswerSubmit = () => {
+  const currentQuestion = quizQuestions[currentQuestionIndex];
+  if (userAnswer === currentQuestion.correctAnswer) {
+    setQuizScore((prevScore) => prevScore + 1);
+  }
+
+  if (currentQuestionIndex < quizQuestions.length - 1) {
+    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+  } else {
+    setShowQuizResult(true);
+  }
+
+  setUserAnswer(""); // Reset answer input
+};
+
+const restartQuiz = () => {
+  startQuiz();
 };
 
 // Modify the handleTrackClick function to handle search tracks
@@ -144,11 +288,17 @@ useEffect(() => {
       setData([]); // Clear the artist/track list when toggling modes
     }, [mode]);
 
-     // Toggle between Top Stats and Search
-  const handleModeChange = (newMode) => {
-    setMode(newMode);
-    setData([]); // Clear data when switching modes
-  };
+    const handleModeChange = (newMode) => {
+      setMode(newMode);
+      setData([]); // Clear data when switching modes
+      if (newMode === "quiz") {
+        if (topTracks.length > 0) {
+          startQuiz();
+        } else {
+          console.error("Top tracks not loaded yet.");
+        }
+      }
+    };
 
   const handleSearch = async (query) => {
     if (!query) return;
@@ -175,7 +325,6 @@ useEffect(() => {
     }
   };
 
-  // Render the appropriate content based on the mode
   const renderContent = () => {
     if (mode === "topStats") {
       return (
@@ -243,7 +392,65 @@ useEffect(() => {
           )}
         </div>
       );
-    }
+    } else if (mode === "quiz") {
+      return (
+        <div className="quiz-container">
+          {isLoading ? (
+            <div className="quiz-loading">
+              <div className="spinner"></div>
+              <p>Generating personalized questions...</p>
+            </div>
+          ) : (
+            <>
+              {quizQuestions.length === 0 && (
+                <p>Loading quiz questions...</p>
+              )}
+      
+              {quizQuestions.length > 0 && (
+                <>
+                  {showQuizResult ? (
+                    <div className="quiz-result">
+                      <h2>Quiz Completed!</h2>
+                      <p>Your score: {quizScore} / {quizQuestions.length}</p>
+                      <button onClick={restartQuiz} id="restart-btn">Restart Quiz</button>
+                      <button onClick={() => setMode("topStats")} id="back-btn">Back to Top Stats</button>
+                    </div>
+                  ) : (
+                    <>
+                      <h2>Question {currentQuestionIndex + 1}</h2>
+                      <p>{quizQuestions[currentQuestionIndex].question}</p>
+                      {quizQuestions[currentQuestionIndex].options ? (
+                        <div className="quiz-options">
+                          {quizQuestions[currentQuestionIndex].options.map((option, index) => (
+                            <button
+                              key={index}
+                              onClick={() => setUserAnswer(option)}
+                              className={userAnswer === option ? "selected" : ""}
+                            >
+                              {option}
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <input
+                          type="text"
+                          value={userAnswer}
+                          onChange={(e) => setUserAnswer(e.target.value)}
+                          placeholder="Your answer..."
+                        />
+                      )}
+                      <button onClick={handleAnswerSubmit} id="next-button">
+                        {currentQuestionIndex < quizQuestions.length - 1 ? "Next Question" : "Finish Quiz"}
+                      </button>
+                    </>
+                  )}
+                </>
+              )}
+            </>
+          )}
+        </div>
+      );
+         }
   };
 
 
@@ -652,14 +859,22 @@ const closePopup = () => {
               className={mode === "topStats" ? "active" : ""}
               onClick={() => handleModeChange("topStats")}
             >
-              Statify Top Stats
+              Statifly Top Stats
             </button>
             <button
               className={mode === "search" ? "active" : ""}
               onClick={() => handleModeChange("search")}
             >
-              Statify Search
+              Statifly Search
             </button>
+
+            <button
+              className={mode === "quiz" ? "active" : ""}
+              onClick={() => handleModeChange("quiz")}
+            >
+              Statifly Quiz Me
+            </button>
+
           </div>
 
           {/* Render the appropriate content */}
@@ -667,6 +882,7 @@ const closePopup = () => {
         </div>
       )}
       <Footer />
+
 
       {selectedTrack && (
   <div className="popup-overlay">
