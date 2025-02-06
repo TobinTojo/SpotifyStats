@@ -14,29 +14,79 @@ const InteractionForm = ({
   return (
     <div id="interaction-container">
       <h1>Spotify Stats</h1>
-      <label htmlFor="stat-type">Stat Type:</label>
-      <select id="stat-type" value={statType} onChange={(e) => setStatType(e.target.value)}>
-        <option value="">Select Type</option>
-        <option value="tracks">Tracks</option>
-        <option value="artists">Artists</option>
-      </select>
-      <label htmlFor="time-range">Time Range:</label>
-      <select id="time-range" value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
-        <option value="">Select Time Range</option>
-        <option value="short_term">Last 4 weeks</option>
-        <option value="medium_term">Last 6 months</option>
-        <option value="long_term">Last 1 year</option>
-      </select>
-      <label htmlFor="track-limit">Limit (Number of Artists/Tracks):</label>
-      <select id="track-limit" value={trackLimit} onChange={(e) => setTrackLimit(e.target.value)}>
-        <option value="">Select Limit</option>
-        <option value="5">5</option>
-        <option value="10">10</option>
-        <option value="20">20</option>
-      </select>
-      <button id="submit-button" onClick={onSubmit} disabled={!isFormValid}>
-        Submit
+      <p className="intro-text">Select your preferences to view personalized Spotify stats.</p>
+      
+      <div className="form-group">
+        <label htmlFor="stat-type">
+          Stat Type:
+          <span className="tooltip-icon" aria-label="Stat type help">
+            ?
+            <span className="tooltip-text">Choose between Top Artists or Top Tracks</span>
+          </span>
+        </label>
+        <select
+          id="stat-type"
+          value={statType}
+          onChange={(e) => setStatType(e.target.value)}
+        >
+          <option value="">Select Type</option>
+          <option value="tracks">Tracks</option>
+          <option value="artists">Artists</option>
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="time-range">
+          Time Range:
+          <span className="tooltip-icon" aria-label="Time range help">
+            ?
+            <span className="tooltip-text">Time Range: Stats are based on your listening history during this period.</span>
+          </span>
+        </label>
+        <select
+          id="time-range"
+          value={timeRange}
+          onChange={(e) => setTimeRange(e.target.value)}
+        >
+          <option value="">Select Time Range</option>
+          <option value="short_term">Last 4 weeks</option>
+          <option value="medium_term">Last 6 months</option>
+          <option value="long_term">Last 1 year</option>
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="track-limit">
+          Number of Results (1-20):
+          <span className="tooltip-icon" aria-label="Results limit help">
+            ?
+            <span className="tooltip-text">Number of items to display in your results</span>
+          </span>
+        </label>
+        <select
+          id="track-limit"
+          value={trackLimit}
+          onChange={(e) => setTrackLimit(e.target.value)}
+        >
+          <option value="">Select Limit</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+        </select>
+      </div>
+
+      <button 
+        id="submit-button" 
+        onClick={onSubmit} 
+        disabled={!isFormValid}
+        aria-label="Show results"
+      >
+        Show Results
       </button>
+      
+      {!isFormValid && (
+        <p className="action-text">Choose a stat type, time range, and limit above.</p>
+      )}
     </div>
   );
 };

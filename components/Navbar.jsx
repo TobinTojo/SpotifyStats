@@ -3,7 +3,7 @@ import React from "react";
 const Navbar = ({ userProfile, onLogout }) => {
   return (
     <nav className={userProfile ? "logged-in" : ""}>
-      <div id="logo">Statify</div>
+      <div id="logo">Statifly</div>
       <div id="user-info-container">
         {userProfile ? (
           <>

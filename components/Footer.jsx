@@ -3,7 +3,7 @@ import React from "react";
 const Footer = () => {
   return (
     <footer style={{ textAlign: "center", marginTop: "40px", padding: "10px" }}>
-      © 2025 Statify. Created by Tobin Tojo. All rights reserved. 
+      © 2025 Statifly. Created by Tobin Tojo. All rights reserved. 
     </footer>
   );
 };

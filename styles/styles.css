@@ -1,335 +1,335 @@
 /* Global Styling */
 body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #191414; /* Spotify dark background */
-    color: #fff;
-    text-align: center;
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #191414; /* Spotify dark background */
+  color: #fff;
+  text-align: center;
 }
 
 
 /* Add to existing popup styles */
 .popup-overlay.closing {
-    animation: fadeOut 0.3s ease forwards;
+  animation: fadeOut 0.3s ease forwards;
 }
 
 .popup-content.closing {
-    animation: slideDown 0.3s ease forwards;
+  animation: slideDown 0.3s ease forwards;
 }
 
 @keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 @keyframes slideDown {
-    from { transform: translateY(0); }
-    to { transform: translateY(100px); }
+  from { transform: translateY(0); }
+  to { transform: translateY(100px); }
 }
 
 /* Heading Style */
 h1 {
-    font-size: 36px;
-    font-weight: bold;
-    margin-bottom: 20px;
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 /* Add these new animations */
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+      opacity: 0;
+      transform: translateY(20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
 }
 
 @keyframes cardEntrance {
-    from {
-        opacity: 0;
-        transform: scale(0.8) rotateY(-10deg);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) rotateY(0);
-    }
+  from {
+      opacity: 0;
+      transform: scale(0.8) rotateY(-10deg);
+  }
+  to {
+      opacity: 1;
+      transform: scale(1) rotateY(0);
+  }
 }
 
-  .loading-spinner {
-  animation: spin 1s linear infinite;
-  width: 40px;
-  height: 40px;
-  border: 4px solid #1DB954;
-  border-radius: 50%;
-  border-top-color: transparent;
+.loading-spinner {
+animation: spin 1s linear infinite;
+width: 40px;
+height: 40px;
+border: 4px solid #1DB954;
+border-radius: 50%;
+border-top-color: transparent;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+to { transform: rotate(360deg); }
 }
 
 /* Animation Keyframes */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+to {
+  opacity: 1;
+  transform: translateY(0);
+}
 }
 
 .track-item, .artist-item {
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    transform-origin: center;
-    opacity: 1; /* Ensure default opacity */
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-origin: center;
+  opacity: 1; /* Ensure default opacity */
 }
 
 
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 /* Footer Styling */
 footer {
-    background-color: #191414; /* Spotify dark background */
-    color: #B3B3B3; /* Light gray text color */
-    padding: 20px;
-    font-size: 16px;
-    text-align: center;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-    box-sizing: border-box; /* Ensure padding is included in the total width */
+  background-color: #191414; /* Spotify dark background */
+  color: #B3B3B3; /* Light gray text color */
+  padding: 20px;
+  font-size: 16px;
+  text-align: center;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box; /* Ensure padding is included in the total width */
 }
 
 /* Hover effect for footer text */
 footer:hover {
-    color: #1DB954; /* Spotify green text on hover */
-    cursor: pointer; /* Indicate it's interactive */
+  color: #1DB954; /* Spotify green text on hover */
+  cursor: pointer; /* Indicate it's interactive */
 }
 
 #interaction-container form {
-    margin-top: 20px;
-  }
-  
-  #interaction-container input[type="text"] {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-right: 10px;
-  }
-  
-  #interaction-container button[type="submit"] {
-    padding: 10px 20px;
-    background-color: #1DB954;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  #interaction-container button[type="submit"]:hover {
-    background-color: #1ed760;
-  }
+  margin-top: 20px;
+}
 
-  /* Mode Toggle Buttons */
+#interaction-container input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+#interaction-container button[type="submit"] {
+  padding: 10px 20px;
+  background-color: #1DB954;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#interaction-container button[type="submit"]:hover {
+  background-color: #1ed760;
+}
+
+/* Mode Toggle Buttons */
 .mode-toggle {
-    display: flex;
-    justify-content: center;
-    margin-top: 100px !important;
-    margin: 20px 0;
-    font-size: 20px;
-  }
-  
-  .mode-toggle button {
-    padding: 15px 30px;
-    margin: 0 15px;
-    border: none;
-    border-radius: 6px;
-    background-color: #333;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .mode-toggle button.active {
-    background-color: #1DB954;
-  }
-  
-  .mode-toggle button:hover {
-    background-color: #1ed760;
-  }
-  
+  display: flex;
+  justify-content: center;
+  margin-top: 100px !important;
+  margin: 20px 0;
+  font-size: 20px;
+}
+
+.mode-toggle button {
+  padding: 15px 30px;
+  margin: 0 15px;
+  border: none;
+  border-radius: 6px;
+  background-color: #333;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.mode-toggle button.active {
+  background-color: #1DB954;
+}
+
+.mode-toggle button:hover {
+  background-color: #1ed760;
+}
+
 /* Search Container */
 .search-container {
-  text-align: center;
-  margin: 20px auto;
-  max-width: 600px;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  animation: fadeIn 0.5s ease-in-out;
+text-align: center;
+margin: 20px auto;
+max-width: 600px;
+padding: 20px;
+border-radius: 12px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+animation: fadeIn 0.5s ease-in-out;
 }
 
 /* Search Input */
 .search-container input[type="text"] {
-  width: 80%;
-  padding: 12px 8px;
-  border: 2px solid #1DB954;
-  margin-right: 30px !important;
-  border-radius: 25px;
-  background-color: #333;
-  color: #fff;
-  font-size: 16px;
-  outline: none;
-  transition: border-color 0.3s ease;
+width: 80%;
+padding: 12px 8px;
+border: 2px solid #1DB954;
+margin-right: 30px !important;
+border-radius: 25px;
+background-color: #333;
+color: #fff;
+font-size: 16px;
+outline: none;
+transition: border-color 0.3s ease;
 }
 
 .search-container input[type="text"]:focus {
-  border-color: #1ed760;
+border-color: #1ed760;
 }
 
 /* Search Button */
 .search-container button[type="submit"] {
-  margin-top: 15px;
-  padding: 12px 24px;
-  background-color: #1DB954;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+margin-top: 15px;
+padding: 12px 24px;
+background-color: #1DB954;
+color: white;
+border: none;
+border-radius: 25px;
+font-size: 16px;
+cursor: pointer;
+transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .search-container button[type="submit"]:hover {
-  background-color: #1ed760;
-  transform: scale(1.05);
+background-color: #1ed760;
+transform: scale(1.05);
 }
 
 .search-container button[type="submit"]:active {
-  transform: scale(0.95);
+transform: scale(0.95);
 }
 
 .loading-spinner-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  min-height: 300px; /* Ensure minimum height for visibility */
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100%;
+min-height: 300px; /* Ensure minimum height for visibility */
 }
 
 .loading-spinner {
-  animation: spin 1s linear infinite;
-  width: 40px;
-  height: 40px;
-  border: 4px solid #1DB954;
-  border-radius: 50%;
-  border-top-color: transparent;
+animation: spin 1s linear infinite;
+width: 40px;
+height: 40px;
+border: 4px solid #1DB954;
+border-radius: 50%;
+border-top-color: transparent;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+to { transform: rotate(360deg); }
 }
 
 /* Mobile responsiveness */
 @media (max-width: 600px) {
-    #login-container h1, #interaction-container h1 {
-        font-size: 23px;
-    }
+  #login-container h1, #interaction-container h1 {
+      font-size: 23px;
+  }
 
-    .click-indicator {
-        margin-left: 20px; /* Add space on mobile */
-        right: 15px; /* Optional: adjust right position if needed */
-      }
-    
-      /* Optional: make the icon smaller on mobile */
-      .click-indicator svg {
-        width: 20px;
-        height: 20px;
-      }
-    
+  .click-indicator {
+      margin-left: 20px; /* Add space on mobile */
+      right: 15px; /* Optional: adjust right position if needed */
+    }
+  
+    /* Optional: make the icon smaller on mobile */
+    .click-indicator svg {
+      width: 20px;
+      height: 20px;
+    }
+  
 
-    nav:not(.logged-in) #logo {
-        display: block !important; /* Show when not logged in */
-        font-size:16px;
-        width: 200px;
-      }
-    
-      /* Hide other elements when not logged in */
-      nav.logged-in #logo {
-        display: none !important;
-      }
-
-         /* Align "Sign Out" button to the right */
-    #user-info-container {
-        justify-content: flex-end; /* Push content to the right */
-        width: 100%; /* Ensure it spans the entire width of the navbar */
-    }
-
-    #user-info {
-        margin-right: 10px; /* Add spacing between username and button */
-    }
-    #user-info {
-        font-size: 15px;
-    }
-
-    #sign-out-button {
-        padding: 7px 14px;
-        font-size: 15px;
-    } 
-
-    .track {
-        height: 120px; /* Increase height for better display on small screens */
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .track-image {
-        width: 80px; /* Slightly larger image for mobile */
-        height: 80px; /* Slightly larger image for mobile */
-        margin-right: 0;
-        margin-bottom: 10px;
-    }
-
-    .artist-info {
-        margin-left: 10px;
-    }
-    
-    .track-info {
-        width: 100%;
-        margin-left: 10px;
-    }
-    
-    .track-number {
-        width: 40px;
-        margin-bottom: 10px; /* Space for smaller layout */
-    }
-
-    .feature-cards {
-        grid-template-columns: 1fr;
-    }
-    
-    #login-button {
-        padding: 1rem 1.5rem;
-        font-size: 1rem;
-    }
-    
-    .floating-note {
-        font-size: 1.5rem;
-    }
-
-    .default-message {
+  nav:not(.logged-in) #logo {
+      display: block !important; /* Show when not logged in */
+      font-size:16px;
       width: 200px;
-      justify-content: center;
-      text-align: center;
-      margin-left: auto;
-      margin-right: auto;
-      display: block;
     }
+  
+    /* Hide other elements when not logged in */
+    nav.logged-in #logo {
+      display: none !important;
+    }
+
+       /* Align "Sign Out" button to the right */
+  #user-info-container {
+      justify-content: flex-end; /* Push content to the right */
+      width: 100%; /* Ensure it spans the entire width of the navbar */
+  }
+
+  #user-info {
+      margin-right: 10px; /* Add spacing between username and button */
+  }
+  #user-info {
+      font-size: 15px;
+  }
+
+  #sign-out-button {
+      padding: 7px 14px;
+      font-size: 15px;
+  } 
+
+  .track {
+      height: 120px; /* Increase height for better display on small screens */
+      flex-direction: column;
+      align-items: flex-start;
+  }
+  
+  .track-image {
+      width: 80px; /* Slightly larger image for mobile */
+      height: 80px; /* Slightly larger image for mobile */
+      margin-right: 0;
+      margin-bottom: 10px;
+  }
+
+  .artist-info {
+      margin-left: 10px;
+  }
+  
+  .track-info {
+      width: 100%;
+      margin-left: 10px;
+  }
+  
+  .track-number {
+      width: 40px;
+      margin-bottom: 10px; /* Space for smaller layout */
+  }
+
+  .feature-cards {
+      grid-template-columns: 1fr;
+  }
+  
+  #login-button {
+      padding: 1rem 1.5rem;
+      font-size: 1rem;
+  }
+  
+  .floating-note {
+      font-size: 1.5rem;
+  }
+
+  .default-message {
+    width: 200px;
+    justify-content: center;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
 }

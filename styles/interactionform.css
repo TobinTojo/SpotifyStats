@@ -117,3 +117,63 @@ select option {
         opacity: 0; 
     }
 }
+
+/* Intro text styling */
+.intro-text {
+    color: #B3B3B3;
+    font-size: 16px;
+    margin-bottom: 25px;
+    text-align: center;
+    line-height: 1.4;
+  }
+  
+  /* Form group spacing */
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  /* Tooltip styling */
+  .tooltip-icon {
+    display: inline-block;
+    margin-left: 8px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #1DB954;
+    color: #121212;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: help;
+    position: relative;
+  }
+  
+  .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #1DB954;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .tooltip-icon:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
+  
+  /* Action text styling */
+  .action-text {
+    color: #B3B3B3;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+  }
