@@ -69,6 +69,9 @@ const [userAnswer, setUserAnswer] = useState(""); // Tracks the user's answer
 const [showQuizResult, setShowQuizResult] = useState(false); // Tracks if the quiz result is shown
 
 const genAI = new GoogleGenerativeAI('AIzaSyBKTyvCaSFo-OdMvWAJ7JOx4nt0Bb5Kn-M');
+const [cooldownMessage, setCooldownMessage] = useState("");
+
+const DEBUG_DISABLE_COOLDOWN = true; // Set to false to enable 12 AM cooldown
 
 const formatDuration = (ms) => {
   const minutes = Math.floor(ms / 60000);
@@ -118,6 +121,23 @@ const generateQuizQuestions = async () => {
       }));
     };
 
+    // Helper function to get all artists with ranks
+    const getAllArtistsWithRanks = async (timeRange) => {
+      try {
+        const [firstSet, secondSet] = await Promise.all([
+          fetchTopArtists(timeRange, 0),
+          fetchTopArtists(timeRange, 50)
+        ]);
+        return [...firstSet, ...secondSet].map((artist, index) => ({
+          ...artist,
+          rank: index + 1
+        }));
+      } catch (error) {
+        console.error(`Failed to fetch artists for ${timeRange}:`, error);
+        return [];
+      }
+    };
+
     // Helper function to determine rank range
     const getRankRange = (rank) => {
       if (rank <= 10) return 'Top 10';
@@ -137,44 +157,58 @@ const generateQuizQuestions = async () => {
       return options.sort(() => 0.5 - Math.random());
     };
 
-    // Get tracks from all time ranges
+    // Process both tracks and artists
     const timeRanges = [
       { id: 'short_term', label: '4 weeks' },
       { id: 'medium_term', label: '6 months' },
       { id: 'long_term', label: '1 year' }
     ];
 
-    // Collect all possible questions
     const questions = [];
-    
-    timeRanges.forEach(({ id, label }) => {
+
+    // Track questions
+    for (const { id, label } of timeRanges) {
       const tracks = getAllTracksWithRanks(id);
       tracks.forEach(track => {
         const correctRange = getRankRange(track.rank);
         questions.push({
           type: 'trackRank',
-          question: `In the last ${label}, where does ${track.name} place?`,
+          question: `In the last ${label}, where does the song <strong style="color: #27adf5;">${track.name}</strong> place?`, // Added bold and blue styling
           correctAnswer: correctRange,
           options: generateOptions(correctRange)
         });
       });
-    });
+    }
 
-    // Shuffle and select up to 10 unique questions
-    const uniqueQuestions = Array.from(new Set(questions.map(q => q.question)))
-      .map(question => questions.find(q => q.question === question));
+    // Artist questions
+    for (const { id, label } of timeRanges) {
+      const artists = await getAllArtistsWithRanks(id);
+      artists.forEach(artist => {
+        const correctRange = getRankRange(artist.rank);
+        questions.push({
+          type: 'artistRank',
+          question: `In the last ${label}, where does the artist <strong style="color: #27adf5;">${artist.name}</strong> place?`, // Added bold and blue styling
+          correctAnswer: correctRange,
+          options: generateOptions(correctRange)
+        });
+      });
+    }
 
-    setQuizQuestions(
-      uniqueQuestions
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 10)
-    );
+    // Shuffle questions to mix track and artist questions
+    const shuffledQuestions = questions.sort(() => 0.5 - Math.random());
+
+    // Limit the number of questions to 10, ensuring a good mix of both
+    const selectedQuestions = shuffledQuestions.slice(0, 10);
+
+    setQuizQuestions(selectedQuestions);
 
   } catch (error) {
     console.error("Failed to generate quiz questions:", error);
     setQuizQuestions([]);
   }
 };
+
+
 
 const startQuiz = async () => {
   setIsLoading(true);
@@ -204,10 +238,6 @@ const handleAnswerSubmit = () => {
   }
 
   setUserAnswer(""); // Reset answer input
-};
-
-const restartQuiz = () => {
-  startQuiz();
 };
 
 // Modify the handleTrackClick function to handle search tracks
@@ -291,12 +321,36 @@ useEffect(() => {
     const handleModeChange = (newMode) => {
       setMode(newMode);
       setData([]); // Clear data when switching modes
+    
       if (newMode === "quiz") {
-        if (topTracks.length > 0) {
+        // Bypass cooldown checks if debug flag is enabled
+        if (DEBUG_DISABLE_COOLDOWN) {
           startQuiz();
-        } else {
-          console.error("Top tracks not loaded yet.");
+          return;
         }
+    
+        // Original cooldown check logic below
+        const now = new Date();
+        const next12AM = new Date(now);
+        next12AM.setHours(24, 0, 0, 0); // 12 AM next day in local time
+        
+        // EST conversion (UTC-5)
+        const estOffset = -5 * 60 * 60 * 1000;
+        const next12AMEST = new Date(next12AM.getTime() + estOffset);
+    
+        const lastQuizAttempt = localStorage.getItem("lastQuizAttempt");
+        if (lastQuizAttempt) {
+          const timeSinceLastAttempt = now.getTime() - parseInt(lastQuizAttempt, 10);
+          if (timeSinceLastAttempt < 0 || now < next12AMEST) {
+            const remainingTime = next12AMEST.getTime() - now.getTime();
+            const remainingHours = Math.floor(remainingTime / (60 * 60 * 1000));
+            const remainingMinutes = Math.floor((remainingTime % (60 * 60 * 1000)) / (60 * 1000));
+            setCooldownMessage(`You can only play the quiz once per day. Please try again at 12 AM EST.`);
+            return;
+          }
+        }
+        localStorage.setItem("lastQuizAttempt", now.getTime().toString());
+        startQuiz();
       }
     };
 
@@ -395,30 +449,38 @@ useEffect(() => {
     } else if (mode === "quiz") {
       return (
         <div className="quiz-container">
-          {isLoading ? (
+          {cooldownMessage ? (
+            <div className="cooldown-message">
+              <p>{cooldownMessage}</p>
+              <button onClick={() => setMode("topStats")} id="back-btn">
+                Back to Top Stats
+              </button>
+            </div>
+          ) : isLoading ? (
             <div className="quiz-loading">
               <div className="spinner"></div>
               <p>Generating personalized questions...</p>
             </div>
           ) : (
             <>
-              {quizQuestions.length === 0 && (
-                <p>Loading quiz questions...</p>
-              )}
-      
+              {quizQuestions.length === 0 && <p>Loading quiz questions...</p>}
+    
               {quizQuestions.length > 0 && (
                 <>
                   {showQuizResult ? (
                     <div className="quiz-result">
                       <h2>Quiz Completed!</h2>
                       <p>Your score: {quizScore} / {quizQuestions.length}</p>
-                      <button onClick={restartQuiz} id="restart-btn">Restart Quiz</button>
-                      <button onClick={() => setMode("topStats")} id="back-btn">Back to Top Stats</button>
+                      <button onClick={() => setMode("topStats")} id="back-btn">
+                        Back to Top Stats
+                      </button>
                     </div>
                   ) : (
                     <>
                       <h2>Question {currentQuestionIndex + 1}</h2>
-                      <p>{quizQuestions[currentQuestionIndex].question}</p>
+                      <p 
+                        dangerouslySetInnerHTML={{ __html: quizQuestions[currentQuestionIndex].question }} 
+                      />
                       {quizQuestions[currentQuestionIndex].options ? (
                         <div className="quiz-options">
                           {quizQuestions[currentQuestionIndex].options.map((option, index) => (
@@ -439,7 +501,11 @@ useEffect(() => {
                           placeholder="Your answer..."
                         />
                       )}
-                      <button onClick={handleAnswerSubmit} id="next-button">
+                      <button
+                        onClick={handleAnswerSubmit}
+                        id="next-button"
+                        disabled={!userAnswer}
+                      >
                         {currentQuestionIndex < quizQuestions.length - 1 ? "Next Question" : "Finish Quiz"}
                       </button>
                     </>
@@ -450,7 +516,7 @@ useEffect(() => {
           )}
         </div>
       );
-         }
+    }
   };
 
 
@@ -848,35 +914,21 @@ const closePopup = () => {
 
   return (
     <div>
-      <Navbar userProfile={userProfile} onLogout={handleLogout} />
+      <Navbar 
+      userProfile={userProfile} 
+      onLogout={handleLogout} 
+      onModeChange={handleModeChange} 
+      mode={mode} 
+    />
       {!accessToken ? (
         <Login />
       ) : (
         <div>
-          {/* Toggle between Top Stats and Search */}
-          <div className="mode-toggle">
-            <button
-              className={mode === "topStats" ? "active" : ""}
-              onClick={() => handleModeChange("topStats")}
-            >
-              Statifly Top Stats
-            </button>
-            <button
-              className={mode === "search" ? "active" : ""}
-              onClick={() => handleModeChange("search")}
-            >
-              Statifly Search
-            </button>
-
-            <button
-              className={mode === "quiz" ? "active" : ""}
-              onClick={() => handleModeChange("quiz")}
-            >
-              Statifly Quiz Me
-            </button>
-
-          </div>
-
+          {userProfile && (
+            <h1 className="welcome-heading">
+              Welcome, <span className="username">{userProfile.display_name}</span>
+            </h1>
+          )}
           {/* Render the appropriate content */}
           {renderContent()}
         </div>

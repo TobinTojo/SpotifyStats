@@ -1,8 +1,7 @@
-/* navbar.css */
 /* Styling for the Navbar */
 nav {
     background-color: #1DB954; /* Spotify green */
-    color: black; /* Updated text color */
+    color: white; /* Updated text color */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -14,6 +13,7 @@ nav {
     z-index: 100;
     height: 60px; /* Consistent height */
     box-sizing: border-box; /* Include padding in height */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 /* Spotify Logo */
@@ -22,23 +22,58 @@ nav {
     font-weight: bold;
     letter-spacing: 1px;
     cursor: pointer;
+    color: white; /* Ensure logo is visible on green background */
+    margin-right: auto; /* Push other elements to the right */
+    transition: opacity 0.3s ease; /* Smooth hover effect */
+}
+
+#logo:hover {
+    opacity: 0.8; /* Slight fade on hover */
+}
+
+/* Navbar options for larger screens */
+.nav-options {
+    display: flex;
+    gap: 15px; /* Increased gap for better spacing */
+    align-items: center;
+}
+
+.nav-options button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 20px; /* Rounded corners */
+    transition: all 0.3s ease; /* Smooth transitions */
+}
+
+.nav-options button:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Light hover effect */
+}
+
+.nav-options button.active {
+    background-color: rgba(255, 255, 255, 0.2); /* Slightly darker for active state */
+    font-weight: bold; /* Bold text for active state */
 }
 
 /* Styling for the User Info and Sign Out Button container */
 #user-info-container {
     display: flex;
     align-items: center;
-    gap: 10px; /* Space between username and button */
+    gap: 15px; /* Increased gap for better spacing */
     height: 100%; /* Match navbar height */
 }
 
 /* Styling for the user info (username) */
 #user-info {
-    font-size: 18px;
-    color: black; /* Updated text color */
+    font-size: 16px;
+    color: white; /* Updated text color */
     white-space: nowrap; /* Prevent text wrapping */
     overflow: hidden; /* Hide overflow if necessary */
     text-overflow: ellipsis; /* Add ellipsis for long text */
+    max-width: 150px; /* Limit width to prevent overflow */
 }
 
 /* Styling for the Sign Out Button */
@@ -50,20 +85,112 @@ nav {
     border: none;
     border-radius: 20px;
     cursor: pointer;
-}
-
-#sign-out-button {
-    /* Add to existing styles */
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.3s ease; /* Smooth transitions */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
 }
 
 #sign-out-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transform: translateY(-2px); /* Slight lift on hover */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
 }
 
 #sign-out-button:focus {
-    outline: none;
+    outline: none; /* Remove default focus outline */
 }
 
+/* Hamburger menu styling */
+#hamburger-menu {
+    display: none; /* Hide by default */
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+    margin-left: auto; /* Push to the right */
+    transition: opacity 0.3s ease; /* Smooth hover effect */
+}
+
+#hamburger-menu:hover {
+    opacity: 0.8; /* Slight fade on hover */
+}
+
+/* Menu content styling */
+.menu-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 60px;
+    background-color: #333;
+    border-radius: 5px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    min-width: 200px; /* Ensure menu has a minimum width */
+}
+
+.menu-content.open {
+    display: block;
+}
+
+.menu-content button {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    text-align: left;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease; /* Smooth transitions */
+}
+
+.menu-content button:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Light hover effect */
+}
+
+.menu-content button.active {
+    background-color: rgba(255, 255, 255, 0.2); /* Slightly darker for active state */
+    font-weight: bold; /* Bold text for active state */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #hamburger-menu {
+        display: none; /* Hide on all screen sizes larger than 768px */
+    }
+
+    #user-info {
+        display: none; /* Hide user info on smaller screens */
+    }
+
+    /* Hide nav options on all screen sizes larger than 600px */
+    .nav-options {
+        display: none;
+    }
+
+    /* Hide menu content for any screen between 600px and 768px */
+    .menu-content {
+        display: none; /* Ensure the menu doesn't show */
+    }
+}
+
+@media (max-width: 600px) {
+    /* Ensure the logo is always visible and aligned to the left */
+    #logo {
+        margin-right: auto; /* Push other elements to the right */
+    }
+
+    /* Adjust the hamburger menu position */
+    #hamburger-menu {
+        margin-left: auto; /* Push to the right */
+    }
+
+    /* Show menu content when hamburger is active */
+    .menu-content.open {
+        display: block;
+    }
+
+    #hamburger-menu {
+        display: block; /* Show hamburger on small screens */
+    }
+}

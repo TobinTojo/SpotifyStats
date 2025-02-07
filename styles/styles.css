@@ -138,13 +138,13 @@ footer:hover {
   }
 
   /* Mode Toggle Buttons */
-.mode-toggle {
+  .mode-toggle {
     display: flex;
     justify-content: center;
-    margin-top: 100px !important;
+    margin-top: 40px !important;
     margin: 20px 0;
     font-size: 20px;
-  }
+}
   
   .mode-toggle button {
     padding: 15px 30px;
@@ -254,7 +254,7 @@ footer:hover {
 
 .quiz-options button {
   padding: 12px; /* Slightly increase padding for larger buttons */
-  background-color: #1db954;
+  background-color: #1db954; /* Green color by default */
   width: 100%; /* Make buttons take up full width of container */
   max-width: 300px; /* Max width of button for a more balanced look */
   border: none;
@@ -265,21 +265,22 @@ footer:hover {
 }
 
 .quiz-options button.selected {
-  background-color: #1ed760;
+  background-color: #3498db; /* Blue color for selected option */
 }
 
 .quiz-options button:hover {
-  background-color: #17a74f; /* Darken button color slightly on hover */
+  background-color: #5dade2; /* Lighter blue on hover */
 }
 
 .quiz-result {
   display: flex;
   flex-direction: column;
+  align-items: center; /* Center the buttons horizontally */
   gap: 15px; /* Adjust gap for consistency */
   margin-top: 20px; /* Add top margin for better spacing */
 }
 
-#next-button, #restart-btn, #back-btn {
+#next-button, #back-btn {
   padding: 12px; /* Slightly increase padding for larger buttons */
   margin-top: 20px;
   background-color: #787d7a;
@@ -288,6 +289,46 @@ footer:hover {
   color: white;
   width: 100%; /* Make buttons take up full width of container */
   max-width: 300px; /* Max width of button for a more balanced look */
+  text-align: center; /* Center the text inside the button */
+}
+
+#next-button {
+  padding: 12px;
+  margin-top: 20px;
+  background-color: #787d7a; /* Default disabled color */
+  border: none;
+  border-radius: 5px;
+  color: white;
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  cursor: not-allowed; /* Disabled cursor */
+}
+
+#next-button:enabled {
+  background-color: #877a7a; /* Enabled color */
+  cursor: pointer; /* Pointer cursor when enabled */
+}
+
+#next-button:disabled {
+  opacity: 0.7; /* Slightly transparent when disabled */
+}
+.quiz-result button {
+  margin: 0 auto; /* Center the button in its container */
+}
+
+.cooldown-message {
+  text-align: center;
+  padding: 20px;
+  background-color: #282828;
+  border-radius: 10px;
+  color: white;
+  margin-top: 20px;
+}
+
+.cooldown-message p {
+  margin-bottom: 20px;
 }
 
 
@@ -295,8 +336,25 @@ footer:hover {
   to { transform: rotate(360deg); }
 }
 
+.welcome-heading {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 120px;
+  color: #ffffff;
+}
+
+.username {
+  color: #27adf5; /* Blue color for the username */
+  font-weight: bold;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 600px) {
+    #statstop-btn, #statsearch-btn, #statsquiz-btn {
+      padding: 1px 30px;
+
+    }
     #login-container h1, #interaction-container h1 {
         font-size: 23px;
     }
@@ -333,11 +391,6 @@ footer:hover {
         display: block !important; /* Show when not logged in */
         font-size:16px;
         width: 200px;
-      }
-    
-      /* Hide other elements when not logged in */
-      nav.logged-in #logo {
-        display: none !important;
       }
 
          /* Align "Sign Out" button to the right */
