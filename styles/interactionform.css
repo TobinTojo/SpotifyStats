@@ -1,24 +1,33 @@
 /* interactionForm.css */
-/* Styling for interaction container (dropdowns and labels) */
+/* Remove card-like styling and make it more integrated */
 #interaction-container {
-    margin-top: 50px;
-    padding: 20px;
-    background-color: #121212; /* Dark background for the interaction area */
-    border-radius: 10px;
-    display: inline-block;
-    text-align: left;
-    width: 50%; /* Decreased width */
-    max-width: 400px; /* Optional: max width for large screens */
-    margin-left: auto; /* Centering the container */
-    margin-right: auto; /* Centering the container */
+    margin-top: 30px; /* Reduced margin */
+    padding: 0; /* Remove padding */
+    background-color: transparent !important; /* Remove background color */
+    border-radius: 0; /* Remove border radius */
+    display: block;
+    text-align: center;
+    width: 100%; /* Full width */
+    max-width: 600px; /* Optional: max width for better readability */
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* Styling for labels */
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    #interaction-container {
+        width:300px;
+    }
+}
+
+/* Label styling */
 label {
     display: block;
-    font-size: 18px;
+    font-size: 16px;
     margin-bottom: 10px;
-    color: #B3B3B3; /* Light grey for labels */
+    color: #B3B3B3;
+    text-align: left;
+    font-weight: 500;
 }
 
 /* Styling for dropdowns */
@@ -27,7 +36,7 @@ select {
     padding: 12px;
     font-size: 16px;
     margin-bottom: 20px; /* Space between dropdowns */
-    background-color: #333; /* Dark background for dropdowns */
+    background-color: #545353; /* Dark background for dropdowns */
     color: #fff; /* White text color */
     border: 1px solid #555;
     border-radius: 8px;
@@ -75,7 +84,6 @@ select option {
 }
 
 #submit-button, #sign-out-button, .artist-spotify-button {
-    /* Add to existing styles */
     transition: all 0.2s ease;
     position: relative;
     overflow: hidden;
@@ -125,15 +133,15 @@ select option {
     margin-bottom: 25px;
     text-align: center;
     line-height: 1.4;
-  }
-  
-  /* Form group spacing */
-  .form-group {
+}
+
+/* Form group spacing */
+.form-group {
     margin-bottom: 20px;
-  }
-  
-  /* Tooltip styling */
-  .tooltip-icon {
+}
+
+/* Tooltip styling */
+.tooltip-icon {
     display: inline-block;
     margin-left: 8px;
     width: 18px;
@@ -146,9 +154,9 @@ select option {
     font-weight: bold;
     cursor: help;
     position: relative;
-  }
-  
-  .tooltip-text {
+}
+
+.tooltip-text {
     visibility: hidden;
     width: 200px;
     background-color: #1DB954;
@@ -163,17 +171,17 @@ select option {
     margin-left: -100px;
     opacity: 0;
     transition: opacity 0.3s;
-  }
-  
-  .tooltip-icon:hover .tooltip-text {
+}
+
+.tooltip-icon:hover .tooltip-text {
     visibility: visible;
     opacity: 1;
-  }
-  
-  /* Action text styling */
-  .action-text {
+}
+
+/* Action text styling */
+.action-text {
     color: #B3B3B3;
     text-align: center;
     margin-top: 20px;
     font-size: 14px;
-  }
+}

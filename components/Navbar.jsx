@@ -1,4 +1,11 @@
 import React, { useState } from "react";
+import {
+  FaChartLine,
+  FaSearch,
+  FaQuestionCircle,
+  FaUser,
+  FaSignOutAlt,
+} from "react-icons/fa";
 
 const Navbar = ({ userProfile, onLogout, onModeChange, mode }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -7,38 +14,52 @@ const Navbar = ({ userProfile, onLogout, onModeChange, mode }) => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  // Icon component
+  const NavIcon = ({ icon }) => (
+    <span className="nav-icon">{icon}</span>
+  );
+
   return (
     <nav className={userProfile ? "logged-in" : ""}>
       <div id="logo">Statifly</div>
       <div id="user-info-container">
         {userProfile ? (
           <>
-            {/* Toggle options for larger screens */}
             <div className="nav-options">
               <button
                 className={mode === "topStats" ? "active" : ""}
                 onClick={() => onModeChange("topStats")}
               >
-                Statifly Top Stats
+                <NavIcon icon={<FaChartLine />} />
+                Top Stats
               </button>
               <button
                 className={mode === "search" ? "active" : ""}
                 onClick={() => onModeChange("search")}
               >
-                Statifly Search
+                <NavIcon icon={<FaSearch />} />
+                Search
               </button>
               <button
                 className={mode === "quiz" ? "active" : ""}
                 onClick={() => onModeChange("quiz")}
               >
-                Statifly Quiz Me
+                <NavIcon icon={<FaQuestionCircle />} />
+                Quiz Me
+              </button>
+              <button
+                className={mode === "profile" ? "active" : ""}
+                onClick={() => onModeChange("profile")}
+              >
+                <NavIcon icon={<FaUser />} />
+                Profile
               </button>
               <button id="sign-out-button" onClick={onLogout}>
+                <NavIcon icon={<FaSignOutAlt />} />
                 Sign Out
               </button>
             </div>
 
-            {/* Hamburger menu for smaller screens */}
             <button id="hamburger-menu" onClick={toggleMenu}>
               ☰
             </button>
@@ -50,7 +71,8 @@ const Navbar = ({ userProfile, onLogout, onModeChange, mode }) => {
                   setIsMenuOpen(false);
                 }}
               >
-                Statifly Top Stats
+                <NavIcon icon={<FaChartLine />} />
+                Top Stats
               </button>
               <button
                 className={mode === "search" ? "active" : ""}
@@ -59,7 +81,8 @@ const Navbar = ({ userProfile, onLogout, onModeChange, mode }) => {
                   setIsMenuOpen(false);
                 }}
               >
-                Statifly Search
+                <NavIcon icon={<FaSearch />} />
+                Search
               </button>
               <button
                 className={mode === "quiz" ? "active" : ""}
@@ -68,9 +91,21 @@ const Navbar = ({ userProfile, onLogout, onModeChange, mode }) => {
                   setIsMenuOpen(false);
                 }}
               >
-                Statifly Quiz Me
+                <NavIcon icon={<FaQuestionCircle />} />
+                Quiz Me
+              </button>
+              <button
+                className={mode === "profile" ? "active" : ""}
+                onClick={() => {
+                  onModeChange("profile");
+                  setIsMenuOpen(false);
+                }}
+              >
+                <NavIcon icon={<FaUser />} />
+                Profile
               </button>
               <button id="sign-out-button" onClick={onLogout}>
+                <NavIcon icon={<FaSignOutAlt />} />
                 Sign Out
               </button>
             </div>

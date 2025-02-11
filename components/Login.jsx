@@ -1,8 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { 
+  FaChevronRight,
+  FaQuoteLeft,
+  FaMusic, 
+  FaMicrophone, 
+  FaSearch, 
+  FaChartLine,
+  FaSpotify 
+} from "react-icons/fa";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const Login = () => {
   const clientId = import.meta.env.VITE_SPOTIFY_API_KEY;
-  const redirectUri = "http://localhost:5173";
+  const redirectUri = "https://mystatify.netlify.app";
   const scopes = [
     "user-read-private",
     "user-read-email",
@@ -15,69 +26,118 @@ const Login = () => {
     scope: scopes.join(" "),
   })}`;
 
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      once: true,
+      offset: 200, // Increased offset for earlier trigger
+      easing: 'ease-out-quad',
+      mirror: false
+    });
+    // Refresh AOS after initial render to catch dynamic elements
+    setTimeout(() => AOS.refresh(), 1000);
+  }, []);
+
   return (
     <div id="login-container">
-      <div className="login-header">
-        <img src="./spotify_512_black.png" alt="Spotify Logo" className="spotify-logo" />
-        <h1>Statifly</h1>
-        <p className="subtitle">Discover your music journey</p>
+      {/* Hero Section */}
+      <div className="hero-section">
+        <div className="hero-content">
+          <div className="spotify-logo-3d">
+            <img src="./spotify_512_black.png" alt="Spotify Logo" className="spotify-logo" />
+          </div>
+          <h1>Statifly</h1>
+          <p className="subtitle">Discover your music journey</p>
+          <button id="login-button" onClick={() => (window.location.href = authUrl)}>
+            <img src="./spotify_512_black.png" alt="Spotify Icon" className="button-logo" />
+            Continue with Spotify
+          </button>
+        </div>
       </div>
 
-      <div className="login-cta">
-        <h2>Get Started</h2>
-        <button id="login-button" onClick={() => (window.location.href = authUrl)}>
-          <img src="./spotify_512_black.png" alt="Spotify Icon" className="button-logo" />
-          Continue with Spotify
-        </button>
-        <p className="disclaimer">Secure login with Spotify OAuth</p>
-      </div>
-
+      {/* Feature Cards Section */}
       <div className="feature-cards">
-        <div className="feature-card">
-          <div className="music-note">🎵</div>
-          <h3>Top Tracks</h3>
-          <p>Discover your most played songs across different time periods.</p>
-        </div>
-
-        <div className="feature-card">
-          <div className="music-note">🎤</div>
-          <h3>Artist Insights</h3>
-          <p>Explore your favorite artists and their popularity over time.</p>
-        </div>
-
-        <div className="feature-card">
-          <div className="music-note">🔍</div>
-          <h3>Artist Search</h3>
-          <p>Search for any artist and view their top tracks in your library.</p>
-        </div>
-
-        <div className="feature-card">
-          <div className="music-note">📈</div>
-          <h3>Trend Analysis</h3>
-          <p>Analyze trends in your listening habits over the past year.</p>
-        </div>
+        {[
+          { 
+            icon: <FaMusic />, 
+            title: "Top Tracks", 
+            text: "Discover your most played songs across different time periods." 
+          },
+          { 
+            icon: <FaMicrophone />, 
+            title: "Artist Insights", 
+            text: "Explore your favorite artists and their popularity over time." 
+          },
+          { 
+            icon: <FaSearch />, 
+            title: "Artist Search", 
+            text: "Search for any artist and view their top tracks in your library." 
+          },
+          { 
+            icon: <FaChartLine />, 
+            title: "Trend Analysis", 
+            text: "Analyze trends in your listening habits over the past year." 
+          },
+        ].map((feature, index) => (
+          <div 
+            className="feature-card" 
+            key={feature.title}
+            data-aos="fade-up"
+            data-aos-delay={index * 100} // Adding delay for staggered animations
+            data-aos-offset="150" // Offset to trigger animation earlier
+          >
+            <div className="feature-icon">{feature.icon}</div>
+            <h3>{feature.title}</h3>
+            <p>{feature.text}</p>
+          </div>
+        ))}
       </div>
 
-      {/* About Statifly Section */}
-      <div className="about-section">
-        <h2>About Statifly</h2>
-        <p>
-          Statifly was born from Tobin Tojo's fascination with music data analytics. 
-          Frustrated that Spotify Wrapped only reveals listening stats once a year, 
-          Tobin wanted a way to track musical trends and discover insights{" "}
-          <em>year-round</em>. This platform empowers users to:
-        </p>
-        <ul>
-          <li>🕒 Access listening history anytime</li>
-          <li>📊 Compare trends between months/seasons</li>
-          <li>🔍 Discover deeper artist/track insights</li>
-          <li>📈 Monitor evolving music tastes over time</li>
-        </ul>
-        <p className="philosophy">
-          "Music shapes our identity — why limit tracking our listening patterns to just December?"
-        </p>
+      {/* Updated About Section */}
+      <div 
+        className="about-section"
+        data-aos="fade-up"
+        data-aos-delay="200"
+      >
+        <div className="about-header">
+          <h2>About Statifly</h2>
+        </div>
+        
+        <div className="about-grid">
+          <div className="about-content">
+            <p className="lead-text">
+              Statifly transforms your Spotify data into meaningful insights 365 days a year.
+              Designed for music enthusiasts who want more than just annual statistics.
+            </p>
+            
+            <div className="feature-list">
+              {[
+                "Access real-time listening history",
+                "Compare musical trends across time periods",
+                "Discover detailed artist & track analytics",
+                "Monitor evolving music preferences"
+              ].map((item, index) => (
+                <div key={index} className="feature-item">
+                  <FaChevronRight className="feature-arrow" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="about-philosophy">
+            <FaQuoteLeft className="quote-icon" />
+            <blockquote>
+              "Music is the fingerprint of personal growth – why measure it 
+              only once a year when it evolves daily?"
+            </blockquote>
+            <div className="founder">
+              <span>Tobin Tojo</span>
+              <span>Creator of Statifly</span>
+            </div>
+          </div>
+        </div>
       </div>
-
       <div className="animated-background">
         {[...Array(8)].map((_, i) => (
           <div key={i} className="floating-note">{i % 2 ? '🎵' : '🎧'}</div>

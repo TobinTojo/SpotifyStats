@@ -11,8 +11,11 @@ import "./styles/interactionform.css";
 import "./styles/liststyles.css";
 import "./styles/popup.css";
 import "./styles/custombarchart.css";
+import "./styles/profile.css";
 import ArtistSongChart from './components/ArtistSongChart';
 import AlbumPieChart from './components/AlbumPieChart';
+import Quiz from "./components/Quiz";
+import Profile from "./components/Profiles";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const App = () => {
@@ -61,17 +64,48 @@ const [trackSpotifyLink, setTrackSpotifyLink] = useState(null);
 
 const [searchType, setSearchType] = useState("artist"); // Add this with other state declarations
 
-const [quizQuestions, setQuizQuestions] = useState([]); // Stores the quiz questions
-const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // Tracks the current question
-const [quizScore, setQuizScore] = useState(0); // Tracks the user's score
-const [isQuizActive, setIsQuizActive] = useState(false); // Tracks if the quiz is active
-const [userAnswer, setUserAnswer] = useState(""); // Tracks the user's answer
-const [showQuizResult, setShowQuizResult] = useState(false); // Tracks if the quiz result is shown
-
 const genAI = new GoogleGenerativeAI('AIzaSyBKTyvCaSFo-OdMvWAJ7JOx4nt0Bb5Kn-M');
 const [cooldownMessage, setCooldownMessage] = useState("");
 
 const DEBUG_DISABLE_COOLDOWN = true; // Set to false to enable 12 AM cooldown
+
+// In your App component
+const [totalScore, setTotalScore] = useState(0);
+const [quizHistory, setQuizHistory] = useState([]);
+
+const [topArtist, setTopArtist] = useState({
+  last4Weeks: null,
+  last6Months: null,
+  lastYear: null,
+}); // State for top artist
+
+const [topTrack, setTopTrack] = useState({
+  last4Weeks: null,
+  last6Months: null,
+  lastYear: null,
+}); // State for top track
+
+
+// Add this handler in App component
+const handleQuizComplete = (result) => {
+  setTotalScore(prev => prev + result.points);
+  setQuizHistory(prev => [...prev, result]);
+};
+
+// Load from localStorage on mount
+useEffect(() => {
+  const savedScore = localStorage.getItem('totalScore');
+  const savedHistory = localStorage.getItem('quizHistory');
+  
+  if (savedScore) setTotalScore(Number(savedScore));
+  if (savedHistory) setQuizHistory(JSON.parse(savedHistory));
+}, []);
+
+// Save to localStorage when values change
+useEffect(() => {
+  localStorage.setItem('totalScore', totalScore);
+  localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
+}, [totalScore, quizHistory]);
 
 const formatDuration = (ms) => {
   const minutes = Math.floor(ms / 60000);
@@ -79,166 +113,6 @@ const formatDuration = (ms) => {
   return `${minutes}:${seconds.padStart(2, '0')}`;
 };
 
-const generateQuizQuestions = async () => {
-  try {
-    // Helper function to get all tracks with ranks for a time range
-    const getAllTracksWithRanks = (timeRange) => {
-      let tracks = [];
-      switch(timeRange) {
-        case 'short_term':
-          tracks = [
-            ...topTracks,
-            ...topTracksSecondSet,
-            ...topTracksThirdSet,
-            ...topTracksFourthSet,
-            ...topTracksFifthSet
-          ];
-          break;
-        case 'medium_term':
-          tracks = [
-            ...topTracksSixMonths,
-            ...topTracksSixMonthsSecondSet,
-            ...topTracksSixMonthsThirdSet,
-            ...topTracksSixMonthsFourthSet,
-            ...topTracksSixMonthsFifthSet
-          ];
-          break;
-        case 'long_term':
-          tracks = [
-            ...topTracksYear,
-            ...topTracksYearSecondSet,
-            ...topTracksYearThirdSet,
-            ...topTracksYearFourthSet,
-            ...topTracksYearFifthSet
-          ];
-          break;
-        default:
-          tracks = [];
-      }
-      return tracks.map((track, index) => ({
-        ...track,
-        rank: index + 1
-      }));
-    };
-
-    // Helper function to get all artists with ranks
-    const getAllArtistsWithRanks = async (timeRange) => {
-      try {
-        const [firstSet, secondSet] = await Promise.all([
-          fetchTopArtists(timeRange, 0),
-          fetchTopArtists(timeRange, 50)
-        ]);
-        return [...firstSet, ...secondSet].map((artist, index) => ({
-          ...artist,
-          rank: index + 1
-        }));
-      } catch (error) {
-        console.error(`Failed to fetch artists for ${timeRange}:`, error);
-        return [];
-      }
-    };
-
-    // Helper function to determine rank range
-    const getRankRange = (rank) => {
-      if (rank <= 10) return 'Top 10';
-      if (rank <= 25) return '11-25';
-      if (rank <= 50) return '26-50';
-      if (rank <= 100) return '51-100';
-      if (rank <= 250) return '101-250';
-      return 'Not in Top 250';
-    };
-
-    // Generate plausible answer options
-    const generateOptions = (correctRange) => {
-      const possibleRanges = ['Top 10', '11-25', '26-50', '51-100', '101-250', 'Not in Top 250'];
-      const incorrectRanges = possibleRanges.filter(range => range !== correctRange);
-      const shuffledIncorrect = incorrectRanges.sort(() => 0.5 - Math.random()).slice(0, 3);
-      const options = [...shuffledIncorrect, correctRange];
-      return options.sort(() => 0.5 - Math.random());
-    };
-
-    // Process both tracks and artists
-    const timeRanges = [
-      { id: 'short_term', label: '4 weeks' },
-      { id: 'medium_term', label: '6 months' },
-      { id: 'long_term', label: '1 year' }
-    ];
-
-    const questions = [];
-
-    // Track questions
-    for (const { id, label } of timeRanges) {
-      const tracks = getAllTracksWithRanks(id);
-      tracks.forEach(track => {
-        const correctRange = getRankRange(track.rank);
-        questions.push({
-          type: 'trackRank',
-          question: `In the last ${label}, where does the song <strong style="color: #27adf5;">${track.name}</strong> place?`, // Added bold and blue styling
-          correctAnswer: correctRange,
-          options: generateOptions(correctRange)
-        });
-      });
-    }
-
-    // Artist questions
-    for (const { id, label } of timeRanges) {
-      const artists = await getAllArtistsWithRanks(id);
-      artists.forEach(artist => {
-        const correctRange = getRankRange(artist.rank);
-        questions.push({
-          type: 'artistRank',
-          question: `In the last ${label}, where does the artist <strong style="color: #27adf5;">${artist.name}</strong> place?`, // Added bold and blue styling
-          correctAnswer: correctRange,
-          options: generateOptions(correctRange)
-        });
-      });
-    }
-
-    // Shuffle questions to mix track and artist questions
-    const shuffledQuestions = questions.sort(() => 0.5 - Math.random());
-
-    // Limit the number of questions to 10, ensuring a good mix of both
-    const selectedQuestions = shuffledQuestions.slice(0, 10);
-
-    setQuizQuestions(selectedQuestions);
-
-  } catch (error) {
-    console.error("Failed to generate quiz questions:", error);
-    setQuizQuestions([]);
-  }
-};
-
-
-
-const startQuiz = async () => {
-  setIsLoading(true);
-  await generateQuizQuestions();
-  setIsLoading(false);
-  
-  if (quizQuestions.length > 0) {
-    setCurrentQuestionIndex(0);
-    setQuizScore(0);
-    setShowQuizResult(false);
-    setIsQuizActive(true);
-  } else {
-    console.error("No quiz questions available.");
-    // Handle error state
-  }
-};
-const handleAnswerSubmit = () => {
-  const currentQuestion = quizQuestions[currentQuestionIndex];
-  if (userAnswer === currentQuestion.correctAnswer) {
-    setQuizScore((prevScore) => prevScore + 1);
-  }
-
-  if (currentQuestionIndex < quizQuestions.length - 1) {
-    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-  } else {
-    setShowQuizResult(true);
-  }
-
-  setUserAnswer(""); // Reset answer input
-};
 
 // Modify the handleTrackClick function to handle search tracks
 const handleTrackClick = (track) => {
@@ -321,37 +195,6 @@ useEffect(() => {
     const handleModeChange = (newMode) => {
       setMode(newMode);
       setData([]); // Clear data when switching modes
-    
-      if (newMode === "quiz") {
-        // Bypass cooldown checks if debug flag is enabled
-        if (DEBUG_DISABLE_COOLDOWN) {
-          startQuiz();
-          return;
-        }
-    
-        // Original cooldown check logic below
-        const now = new Date();
-        const next12AM = new Date(now);
-        next12AM.setHours(24, 0, 0, 0); // 12 AM next day in local time
-        
-        // EST conversion (UTC-5)
-        const estOffset = -5 * 60 * 60 * 1000;
-        const next12AMEST = new Date(next12AM.getTime() + estOffset);
-    
-        const lastQuizAttempt = localStorage.getItem("lastQuizAttempt");
-        if (lastQuizAttempt) {
-          const timeSinceLastAttempt = now.getTime() - parseInt(lastQuizAttempt, 10);
-          if (timeSinceLastAttempt < 0 || now < next12AMEST) {
-            const remainingTime = next12AMEST.getTime() - now.getTime();
-            const remainingHours = Math.floor(remainingTime / (60 * 60 * 1000));
-            const remainingMinutes = Math.floor((remainingTime % (60 * 60 * 1000)) / (60 * 1000));
-            setCooldownMessage(`You can only play the quiz once per day. Please try again at 12 AM EST.`);
-            return;
-          }
-        }
-        localStorage.setItem("lastQuizAttempt", now.getTime().toString());
-        startQuiz();
-      }
     };
 
   const handleSearch = async (query) => {
@@ -446,75 +289,41 @@ useEffect(() => {
           )}
         </div>
       );
-    } else if (mode === "quiz") {
+    } else if (mode === "profile") {
       return (
-        <div className="quiz-container">
-          {cooldownMessage ? (
-            <div className="cooldown-message">
-              <p>{cooldownMessage}</p>
-              <button onClick={() => setMode("topStats")} id="back-btn">
-                Back to Top Stats
-              </button>
-            </div>
-          ) : isLoading ? (
-            <div className="quiz-loading">
-              <div className="spinner"></div>
-              <p>Generating personalized questions...</p>
-            </div>
-          ) : (
-            <>
-              {quizQuestions.length === 0 && <p>Loading quiz questions...</p>}
-    
-              {quizQuestions.length > 0 && (
-                <>
-                  {showQuizResult ? (
-                    <div className="quiz-result">
-                      <h2>Quiz Completed!</h2>
-                      <p>Your score: {quizScore} / {quizQuestions.length}</p>
-                      <button onClick={() => setMode("topStats")} id="back-btn">
-                        Back to Top Stats
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      <h2>Question {currentQuestionIndex + 1}</h2>
-                      <p 
-                        dangerouslySetInnerHTML={{ __html: quizQuestions[currentQuestionIndex].question }} 
-                      />
-                      {quizQuestions[currentQuestionIndex].options ? (
-                        <div className="quiz-options">
-                          {quizQuestions[currentQuestionIndex].options.map((option, index) => (
-                            <button
-                              key={index}
-                              onClick={() => setUserAnswer(option)}
-                              className={userAnswer === option ? "selected" : ""}
-                            >
-                              {option}
-                            </button>
-                          ))}
-                        </div>
-                      ) : (
-                        <input
-                          type="text"
-                          value={userAnswer}
-                          onChange={(e) => setUserAnswer(e.target.value)}
-                          placeholder="Your answer..."
-                        />
-                      )}
-                      <button
-                        onClick={handleAnswerSubmit}
-                        id="next-button"
-                        disabled={!userAnswer}
-                      >
-                        {currentQuestionIndex < quizQuestions.length - 1 ? "Next Question" : "Finish Quiz"}
-                      </button>
-                    </>
-                  )}
-                </>
-              )}
-            </>
-          )}
-        </div>
+        <Profile
+          userProfile={userProfile}
+          quizHistory={quizHistory}
+          totalScore={totalScore}
+          topArtist={topArtist}
+          topTrack={topTrack}
+        />
+      );
+    }
+    else if (mode === "quiz") {
+      return (
+        <Quiz
+        accessToken={accessToken}
+        topTracks={topTracks}
+        topTracksSecondSet={topTracksSecondSet}
+        topTracksThirdSet={topTracksThirdSet}
+        topTracksFourthSet={topTracksFourthSet}
+        topTracksFifthSet={topTracksFifthSet}
+        topTracksSixMonths={topTracksSixMonths}
+        topTracksSixMonthsSecondSet={topTracksSixMonthsSecondSet}
+        topTracksSixMonthsThirdSet={topTracksSixMonthsThirdSet}
+        topTracksSixMonthsFourthSet={topTracksSixMonthsFourthSet}
+        topTracksSixMonthsFifthSet={topTracksSixMonthsFifthSet}
+        topTracksYear={topTracksYear}
+        topTracksYearSecondSet={topTracksYearSecondSet}
+        topTracksYearThirdSet={topTracksYearThirdSet}
+        topTracksYearFourthSet={topTracksYearFourthSet}
+        topTracksYearFifthSet={topTracksYearFifthSet}
+        fetchTopArtists={fetchTopArtists}
+        DEBUG_DISABLE_COOLDOWN={DEBUG_DISABLE_COOLDOWN}
+        onQuizComplete={handleQuizComplete}
+        onClose={() => setMode("topStats")}
+      />
       );
     }
   };
@@ -625,8 +434,41 @@ const getAvailableTimeRanges = () => {
   useEffect(() => {
     if (accessToken) {
       fetchUserProfile(accessToken);
+      fetchTopArtistAndTrack(); // Fetch top artist and track
     }
   }, [accessToken]);
+
+  const fetchTopArtistAndTrack = async () => {
+    try {
+      // Get top artist for each time range
+      const [last4WeeksArtist, last6MonthsArtist, lastYearArtist] = await Promise.all([
+        fetchTopArtists("short_term", 0),
+        fetchTopArtists("medium_term", 0),
+        fetchTopArtists("long_term", 0),
+      ]);
+  
+      setTopArtist({
+        last4Weeks: last4WeeksArtist[0] || null,
+        last6Months: last6MonthsArtist[0] || null,
+        lastYear: lastYearArtist[0] || null,
+      });
+  
+      // Get top track for each time range
+      const [last4WeeksTrack, last6MonthsTrack, lastYearTrack] = await Promise.all([
+        fetchTopTracks(0, "short_term"), // Fetch top tracks for 4 weeks
+        fetchTopTracks(0, "medium_term"), // Fetch top tracks for 6 months
+        fetchTopTracks(0, "long_term"), // Fetch top tracks for 1 year
+      ]);
+  
+      setTopTrack({
+        last4Weeks: last4WeeksTrack[0] || null,
+        last6Months: last6MonthsTrack[0] || null,
+        lastYear: lastYearTrack[0] || null,
+      });
+    } catch (error) {
+      console.error("Error fetching top artist/track:", error);
+    }
+  };
 
   const handleSubmit = async () => {
     try {
@@ -678,9 +520,9 @@ const getAvailableTimeRanges = () => {
   }, [statType]);
 
   // Fetch top 100 tracks for past 4 weeks
-  const fetchTopTracks = async (offset = 0) => {
+  const fetchTopTracks = async (offset = 0, timeRange = "short_term") => {
     try {
-      const topTracksUrl = `https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=50&offset=${offset}`;
+      const topTracksUrl = `https://api.spotify.com/v1/me/top/tracks?time_range=${timeRange}&limit=50&offset=${offset}`;
       const response = await fetch(topTracksUrl, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
@@ -926,7 +768,7 @@ const closePopup = () => {
         <div>
           {userProfile && (
             <h1 className="welcome-heading">
-              Welcome, <span className="username">{userProfile.display_name}</span>
+              
             </h1>
           )}
           {/* Render the appropriate content */}

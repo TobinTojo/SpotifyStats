@@ -1,7 +1,7 @@
 /* listStyles.css */
 /* General styling for each track item */
 .track-item {
-    display: flex;
+    display: flex !important;
     align-items: center;
     margin: 0 auto 15px; /* Center the item horizontally and add bottom margin */
     padding: 10px;
@@ -70,7 +70,7 @@
 
 /* General styling for each artist item */
 .artist-item {
-    display: flex;
+    display: flex !important;
     align-items: center;
     margin: 0 auto 15px; /* Center the item horizontally and add bottom margin */
     padding: 10px;
