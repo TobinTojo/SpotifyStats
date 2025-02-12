@@ -17,6 +17,9 @@ import AlbumPieChart from './components/AlbumPieChart';
 import Quiz from "./components/Quiz";
 import Profile from "./components/Profiles";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import {
+  FaSearch,
+} from "react-icons/fa";
 
 const App = () => {
   const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken") || null);
@@ -84,6 +87,8 @@ const [topTrack, setTopTrack] = useState({
   last6Months: null,
   lastYear: null,
 }); // State for top track
+
+const [offset, setOffset] = useState(0); // Add this state
 
 
 // Add this handler in App component
@@ -236,12 +241,18 @@ useEffect(() => {
             onSubmit={handleSubmit}
           />
           {statType === "tracks" ? (
-            <TracksList tracks={data} onTrackClick={handleTrackClick} />
+            <TracksList 
+              tracks={data} 
+              onTrackClick={handleTrackClick} 
+              isSearchMode={false}
+              offset={offset} // Pass the offset
+            />
           ) : (
             <ArtistsList
               artists={data}
               onArtistClick={handleArtistClick}
-              isSearchMode={false} // Not in search mode
+              isSearchMode={false}
+              offset={offset} // Pass the offset
             />
           )}
         </div>
@@ -249,6 +260,7 @@ useEffect(() => {
     } else if (mode === "search") {
       return (
         <div className="search-container">
+          <h1>Music Search</h1>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -256,22 +268,25 @@ useEffect(() => {
             }}
           >
             <div className="search-controls">
-              <select 
-                value={searchType} 
+              <select
+                value={searchType}
                 onChange={(e) => setSearchType(e.target.value)}
                 className="search-type-select"
               >
                 <option value="artist">Artists</option>
                 <option value="track">Tracks</option>
               </select>
-              <input
-                type="text"
-                placeholder={`Search for ${searchType === "artist" ? "an artist..." : "a track..."}`}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input"
-              />
-              <button type="submit" className="search-button">Search</button>
+              <div className="search-input-container">
+                <FaSearch className="search-icon" /> {/* Corrected icon usage */}
+                <input
+                  type="text"
+                  placeholder={`Search for ${searchType === "artist" ? "an artist..." : "a track..."}`}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="search-input"
+                />
+                <button type="submit" className="search-button">Search</button>
+              </div>
             </div>
           </form>
           {searchType === "artist" ? (
@@ -470,34 +485,58 @@ const getAvailableTimeRanges = () => {
     }
   };
 
+  const calculateOffset = (trackLimit) => {
+    switch (trackLimit) {
+      case "20": return 0; // 1-20
+      case "40": return 20; // 21-40
+      case "60": return 40; // 41-60
+      case "80": return 60; // 61-80
+      case "100": return 80; // 81-100
+      default: return 0; // Default to 1-20
+    }
+  };
+
   const handleSubmit = async () => {
     try {
       const endpoint = statType === "tracks" ? "me/top/tracks" : "me/top/artists";
-      const limit = trackLimit ? parseInt(trackLimit) : 20; // Default to 20 if not specified
-      const maxLimitPerRequest = 50; // Spotify's maximum limit per request
-      const numberOfRequests = Math.ceil(limit / maxLimitPerRequest);
-      let allItems = [];
-  
-      for (let i = 0; i < numberOfRequests; i++) {
-        const offset = i * maxLimitPerRequest;
-        const currentLimit = Math.min(maxLimitPerRequest, limit - offset);
-        if (currentLimit <= 0) break;
-  
-        const url = `https://api.spotify.com/v1/${endpoint}?${new URLSearchParams({
-          time_range: timeRange,
-          limit: currentLimit,
-          offset: offset,
-        })}`;
-  
-        const response = await fetch(url, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        const result = await response.json();
-        allItems = [...allItems, ...result.items];
+      const limit = 20; // Always fetch 20 tracks/artists per request
+      const selectedRange = trackLimit; // This will be "20", "40", "60", "80", or "100"
+
+      // Calculate the offset based on the selected range
+      let newOffset = 0;
+      switch (selectedRange) {
+        case "20":
+          newOffset = 0; // Fetch tracks/artists 1-20
+          break;
+        case "40":
+          newOffset = 20; // Fetch tracks/artists 21-40
+          break;
+        case "60":
+          newOffset = 40; // Fetch tracks/artists 41-60
+          break;
+        case "80":
+          newOffset = 60; // Fetch tracks/artists 61-80
+          break;
+        case "100":
+          newOffset = 80; // Fetch tracks/artists 81-100
+          break;
+        default:
+          newOffset = 0; // Default to 1-20
       }
-  
-      // Slice to ensure we don't exceed the requested limit
-      setData(allItems.slice(0, limit));
+
+      setOffset(newOffset); // Update the offset state
+
+      const url = `https://api.spotify.com/v1/${endpoint}?${new URLSearchParams({
+        time_range: timeRange,
+        limit: limit,
+        offset: newOffset,
+      })}`;
+
+      const response = await fetch(url, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const result = await response.json();
+      setData(result.items); // Set the fetched tracks/artists
     } catch (error) {
       console.error("Failed to fetch data:", error);
     }

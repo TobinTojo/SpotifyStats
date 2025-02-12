@@ -1,21 +1,19 @@
 import React from "react";
 
-const TracksList = ({ tracks = [], onTrackClick, isSearchMode }) => {
-  // Safeguard in case tracks is empty or undefined
+const TracksList = ({ tracks = [], onTrackClick, isSearchMode, offset = 0 }) => {
   if (!tracks || tracks.length === 0) {
     return <div>No tracks to display. Please submit your selection.</div>;
   }
 
-  // Define styles for the top 3 and others (only if not in search mode)
   const getStyle = (index) => {
     if (isSearchMode) {
-      return { backgroundColor: "#181818" }; // Default style for search mode
+      return { backgroundColor: "#181818" };
     }
 
     if (index === 0) {
       return {
         color: "gold",
-        backgroundColor: "#2a2a2a", // Lighter shade of default (#181818)
+        backgroundColor: "#2a2a2a",
         border: "2px solid gold",
         boxShadow: "0 0 10px gold",
       };
@@ -23,20 +21,20 @@ const TracksList = ({ tracks = [], onTrackClick, isSearchMode }) => {
     if (index === 1) {
       return {
         color: "silver",
-        backgroundColor: "#2a2a2a", // Lighter shade of default (#181818)
+        backgroundColor: "#2a2a2a",
         border: "2px solid silver",
         boxShadow: "0 0 10px silver",
       };
     }
     if (index === 2) {
       return {
-        color: "#cd7f32", // Bronze
-        backgroundColor: "#2a2a2a", // Lighter shade of default (#181818)
+        color: "#cd7f32",
+        backgroundColor: "#2a2a2a",
         border: "2px solid #cd7f32",
         boxShadow: "0 0 10px #cd7f32",
       };
     }
-    return { backgroundColor: "#181818" }; // Default for others
+    return { backgroundColor: "#181818" };
   };
 
   const getFontWeight = (index) => (index < 3 && !isSearchMode ? "bold" : "normal");
@@ -62,13 +60,12 @@ const TracksList = ({ tracks = [], onTrackClick, isSearchMode }) => {
           className="track-item"
           style={getStyle(index)}
         >
-          {/* Only show rank number if not in search mode */}
           {!isSearchMode && (
             <div
               className="track-number"
               style={{ color: getStyle(index).color, fontWeight: getFontWeight(index) }}
             >
-              {index + 1}. {/* Display rank */}
+              {index + 1 + offset}. {/* Add the offset to the rank */}
             </div>
           )}
           <img
@@ -87,7 +84,6 @@ const TracksList = ({ tracks = [], onTrackClick, isSearchMode }) => {
             <br />
             <span>Popularity: {track.popularity}</span>
           </div>
-          {/* Add click indicator */}
           <div className="click-indicator">
             <svg
               width="24"

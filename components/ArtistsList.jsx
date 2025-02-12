@@ -1,14 +1,13 @@
 import React from "react";
 
-const ArtistsList = ({ artists = [], onArtistClick, isSearchMode }) => {
+const ArtistsList = ({ artists = [], onArtistClick, isSearchMode, offset = 0 }) => {
   if (!artists || artists.length === 0) {
     return <div>No artists to display. Please submit your selection.</div>;
   }
 
-  // Define styles for the top 3 and others (only if not in search mode)
   const getStyle = (index) => {
     if (isSearchMode) {
-      return { backgroundColor: "#181818" }; // Default style for search mode
+      return { backgroundColor: "#181818" };
     }
 
     if (index === 0) {
@@ -42,7 +41,6 @@ const ArtistsList = ({ artists = [], onArtistClick, isSearchMode }) => {
 
   return (
     <div id="artists-container">
-      {/* Only show "Leaderboard" heading if not in search mode */}
       {!isSearchMode && <h2>Leaderboard</h2>}
 
       <div className="click-hint">
@@ -54,15 +52,14 @@ const ArtistsList = ({ artists = [], onArtistClick, isSearchMode }) => {
           key={artist.id}
           className="artist-item"
           style={getStyle(index)}
-          onClick={() => onArtistClick(artist)} // Trigger click event handler
+          onClick={() => onArtistClick(artist)}
         >
-          {/* Only show ranking number if not in search mode */}
           {!isSearchMode && (
             <div
               className="artist-number"
               style={{ color: getStyle(index).color, fontWeight: getFontWeight(index) }}
             >
-              {index + 1}.
+              {index + 1 + offset}. {/* Add the offset to the rank */}
             </div>
           )}
           <img
@@ -83,7 +80,6 @@ const ArtistsList = ({ artists = [], onArtistClick, isSearchMode }) => {
             <br />
             <span>Popularity: {artist.popularity}</span>
           </div>
-          {/* Add click indicator */}
           <div className="click-indicator">
             <svg 
               width="24" 

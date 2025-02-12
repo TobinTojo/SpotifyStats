@@ -57,7 +57,7 @@ const InteractionForm = ({
 
       <div className="form-group">
         <label htmlFor="track-limit">
-          Number of Results (1-20):
+          Number of Results:
           <span className="tooltip-icon" aria-label="Results limit help">
             ?
             <span className="tooltip-text">Number of items to display in your results</span>
@@ -69,9 +69,11 @@ const InteractionForm = ({
           onChange={(e) => setTrackLimit(e.target.value)}
         >
           <option value="">Select Limit</option>
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
+          <option value="20">1-20</option>
+          <option value="40">21-40</option>
+          <option value="60">41-60</option>
+          <option value="80">61-80</option>
+          <option value="100">81-100</option>
         </select>
       </div>
 

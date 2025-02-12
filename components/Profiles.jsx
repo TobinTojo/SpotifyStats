@@ -43,6 +43,7 @@ const Profile = ({ userProfile, quizHistory, totalScore, topArtist, topTrack }) 
 
   return (
     <div className="profile-container">
+      <h1>User Profile</h1>
       <div className="user-card">
         <div className="user-header">
           <img
@@ -147,18 +148,21 @@ const Profile = ({ userProfile, quizHistory, totalScore, topArtist, topTrack }) 
         </button>
 
         {/* Quiz history section */}
-        {showHistory && (
-          <div className="quiz-history">
-            <h3>Quiz History</h3>
-            {quizHistory.map((attempt, index) => (
-              <div key={index} className="quiz-attempt">
-                <span>{new Date(attempt.date).toLocaleDateString()}</span>
-                <span>{attempt.score}/{attempt.total}</span>
-                <span>+{attempt.points} points</span>
-              </div>
-            ))}
-          </div>
-        )}
+          {showHistory && (
+            <div className="quiz-history">
+              <h3>Quiz History</h3>
+              {quizHistory
+                .sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort by date, most recent first
+                .map((attempt, index) => (
+                  <div key={index} className="quiz-attempt">
+                    <span>{new Date(attempt.date).toLocaleDateString()}</span>
+                    <span>{attempt.score}/{attempt.total}</span>
+                    <span>+{attempt.points} points</span>
+                  </div>
+                ))}
+            </div>
+          )}
+
       </div>
     </div>
   );

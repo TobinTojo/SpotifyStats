@@ -164,7 +164,7 @@ footer:hover {
   .mode-toggle button:hover {
     background-color: #1ed760;
   }
-  
+
 /* Search Container */
 .search-container {
   text-align: center;
@@ -172,16 +172,39 @@ footer:hover {
   max-width: 600px;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Search Controls */
+.search-controls {
+  display: block;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+/* Search Input Container */
+.search-input-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Search Icon */
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+  font-size: 18px;
 }
 
 /* Search Input */
 .search-container input[type="text"] {
-  width: 80%;
-  padding: 12px 8px;
+  width: 100%;
+  padding: 12px 16px 12px 40px; /* Adjust left padding to make space for the icon */
   border: 2px solid #1DB954;
-  margin-right: 30px !important;
   border-radius: 25px;
   background-color: #333;
   color: #fff;
@@ -196,25 +219,43 @@ footer:hover {
 
 /* Search Button */
 .search-container button[type="submit"] {
-  margin-top: 15px;
-  padding: 12px 24px;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 8px 16px;
   background-color: #1DB954;
   color: white;
   border: none;
-  border-radius: 25px;
-  font-size: 16px;
+  border-radius: 20px;
+  font-size: 14px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .search-container button[type="submit"]:hover {
   background-color: #1ed760;
-  transform: scale(1.05);
+  transform: translateY(-50%) scale(1.05);
 }
 
 .search-container button[type="submit"]:active {
-  transform: scale(0.95);
+  transform: translateY(-50%) scale(0.95);
 }
+
+
+/* Search Type Select */
+.search-type-select {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  background-color: #545353;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 8px;
+  outline: none;
+}
+
 
 .loading-spinner-container {
   display: flex;
@@ -234,50 +275,105 @@ footer:hover {
 }
 
 .quiz-container {
-  max-width: 600px; /* Limit the width for better readability */
-  margin: 0 auto; /* Center the container horizontally */
-  padding: 30px; /* Add a bit more padding for better spacing */
-  background-color: #282828;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  /* background-color: #282828; */
   border-radius: 10px;
   color: white;
   text-align: center;
-  box-sizing: border-box; /* Ensure padding is included in width */
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); */
+}
+
+.quiz-progress {
+  margin-bottom: 20px;
+}
+
+.quiz-progress-bar {
+  height: 5px;
+  background-color: #1db954;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.quiz-question {
+  margin-bottom: 20px;
+}
+
+.quiz-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  object-fit: cover;
 }
 
 .quiz-options {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center the buttons horizontally */
-  gap: 15px; /* Increase gap between buttons for better spacing */
-  margin-top: 20px; /* Adjust margin for proper spacing */
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .quiz-options button {
-  padding: 12px; /* Slightly increase padding for larger buttons */
-  background-color: #1db954; /* Green color by default */
-  width: 100%; /* Make buttons take up full width of container */
-  max-width: 300px; /* Max width of button for a more balanced look */
+  padding: 15px;
+  background-color: #6c6c6c;
   border: none;
   border-radius: 5px;
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s ease; /* Add transition effect for hover */
+  transition: background-color 0.3s ease;
 }
 
 .quiz-options button.selected {
-  background-color: #3498db; /* Blue color for selected option */
+  background-color: #3498db;
 }
 
 .quiz-options button:hover {
-  background-color: #5dade2; /* Lighter blue on hover */
+  background-color: #5dade2;
+}
+
+#next-button {
+  padding: 15px;
+  background-color: #1DB954;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#next-button:enabled {
+  background-color: #1DB954;
+}
+
+#next-button:disabled {
+  background-color: #787d7a;
 }
 
 .quiz-result {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center the buttons horizontally */
-  gap: 15px; /* Adjust gap for consistency */
-  margin-top: 20px; /* Add top margin for better spacing */
+  text-align: center;
+  padding: 20px;
+}
+
+.quiz-result h2 {
+  color: #27adf5;
+  margin-bottom: 15px;
+}
+
+.cooldown-message {
+  text-align: center;
+  padding: 20px;
+  background-color: #282828;
+  border-radius: 10px;
+  color: white;
+  margin-top: 20px;
+}
+
+.cooldown-message p {
+  margin-bottom: 20px;
 }
 
 #next-button, #back-btn {
@@ -307,7 +403,7 @@ footer:hover {
 }
 
 #next-button:enabled {
-  background-color: #877a7a; /* Enabled color */
+  background-color: #1DB954; /* Enabled color */
   cursor: pointer; /* Pointer cursor when enabled */
 }
 
@@ -331,6 +427,64 @@ footer:hover {
   margin-bottom: 20px;
 }
 
+/* Timer Ring */
+.timer-ring {
+  position: relative;
+  margin: 20px auto;
+}
+
+.timer-ring-base {
+  fill: none;
+  stroke: #2a2a2a;
+  stroke-width: 4;
+}
+
+.timer-ring-progress {
+  fill: none;
+  stroke: #1DB954;
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.timer-text {
+  fill: white;
+  font-size: 18px;
+  font-weight: bold;
+  dominant-baseline: middle;
+  text-anchor: middle;
+}
+
+
+/* Answer Feedback */
+.quiz-options button.correct {
+  background-color: #1DB954 !important;
+  animation: popIn 0.3s ease;
+}
+
+.quiz-options button.incorrect {
+  background-color: #e74c3c !important;
+  animation: shake 0.4s ease;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.95); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  50% { transform: translateX(10px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+.quiz-options button:disabled {
+  opacity: 0.9;
+}
+
 
 @keyframes spin {
   to { transform: rotate(360deg); } 
@@ -349,40 +503,6 @@ footer:hover {
   font-weight: bold;
 }
 
-.quiz-stats {
-  padding: 20px;
-  background: #1a1a1a;
-  border-radius: 8px;
-  margin: 20px 0;
-}
-
-.quiz-history {
-  margin-top: 15px;
-}
-
-.quiz-attempt {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px;
-  margin: 5px 0;
-  background: #2a2a2a;
-  border-radius: 4px;
-}
-
-.quiz-attempt span {
-  flex: 1;
-  text-align: center;
-}
-
-.quiz-result {
-  text-align: center;
-  padding: 20px;
-}
-
-.quiz-result h2 {
-  color: #27adf5;
-  margin-bottom: 15px;
-}
 
 /* Mobile responsiveness */
 @media (max-width: 600px) {
