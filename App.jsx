@@ -20,6 +20,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import {
   FaSearch,
 } from "react-icons/fa";
+import { db } from "./firebase";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
 const App = () => {
   const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken") || null);
@@ -91,20 +93,38 @@ const [topTrack, setTopTrack] = useState({
 const [offset, setOffset] = useState(0); // Add this state
 
 
-// Add this handler in App component
-const handleQuizComplete = (result) => {
-  setTotalScore(prev => prev + result.points);
-  setQuizHistory(prev => [...prev, result]);
+const handleQuizComplete = async (result) => {
+  const newScore = totalScore + result.points;
+  const newHistory = [...quizHistory, result];
+
+  setTotalScore(newScore);
+  setQuizHistory(newHistory);
+
+  if (userProfile) {
+    const userRef = doc(db, "users", userProfile.id);
+    try {
+      await setDoc(userRef, { totalScore: newScore, quizHistory: newHistory }, { merge: true });
+    } catch (error) {
+      console.error("Error saving quiz data:", error);
+    }
+  }
 };
 
-// Load from localStorage on mount
+
 useEffect(() => {
-  const savedScore = localStorage.getItem('totalScore');
-  const savedHistory = localStorage.getItem('quizHistory');
-  
-  if (savedScore) setTotalScore(Number(savedScore));
-  if (savedHistory) setQuizHistory(JSON.parse(savedHistory));
-}, []);
+  const fetchUserData = async () => {
+    if (userProfile) {
+      const userRef = doc(db, "users", userProfile.id);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        setTotalScore(userSnap.data().totalScore || 0);
+        setQuizHistory(userSnap.data().quizHistory || []);
+      }
+    }
+  };
+  fetchUserData();
+}, [userProfile]);
+
 
 // Save to localStorage when values change
 useEffect(() => {
