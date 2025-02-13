@@ -5,6 +5,7 @@ import {
   FaQuestionCircle,
   FaUser,
   FaSignOutAlt,
+  FaMedal,
 } from "react-icons/fa";
 
 const Navbar = ({ userProfile, onLogout, onModeChange, mode }) => {
@@ -48,6 +49,13 @@ const Navbar = ({ userProfile, onLogout, onModeChange, mode }) => {
                 Quiz Me
               </button>
               <button
+                className={mode === "leaderboard" ? "active" : ""}
+                onClick={() => onModeChange("leaderboard")}
+              >
+                <NavIcon icon={<FaMedal />} />
+                Leaderboard
+              </button>
+              <button
                 className={mode === "profile" ? "active" : ""}
                 onClick={() => onModeChange("profile")}
               >
@@ -60,6 +68,7 @@ const Navbar = ({ userProfile, onLogout, onModeChange, mode }) => {
               </button>
             </div>
 
+            {/* Mobile Menu */}
             <button id="hamburger-menu" onClick={toggleMenu}>
               ☰
             </button>
@@ -93,6 +102,16 @@ const Navbar = ({ userProfile, onLogout, onModeChange, mode }) => {
               >
                 <NavIcon icon={<FaQuestionCircle />} />
                 Quiz Me
+              </button>
+              <button
+                className={mode === "leaderboard" ? "active" : ""}
+                onClick={() => {
+                  onModeChange("leaderboard");
+                  setIsMenuOpen(false);
+                }}
+              >
+                <NavIcon icon={<FaMedal />} />
+                Leaderboard
               </button>
               <button
                 className={mode === "profile" ? "active" : ""}

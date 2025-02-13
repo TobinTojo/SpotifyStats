@@ -16,6 +16,7 @@ import ArtistSongChart from './components/ArtistSongChart';
 import AlbumPieChart from './components/AlbumPieChart';
 import Quiz from "./components/Quiz";
 import Profile from "./components/Profiles";
+import Leaderboard from "./components/Leaderboard";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import {
   FaSearch,
@@ -103,12 +104,21 @@ const handleQuizComplete = async (result) => {
   if (userProfile) {
     const userRef = doc(db, "users", userProfile.id);
     try {
-      await setDoc(userRef, { totalScore: newScore, quizHistory: newHistory }, { merge: true });
+      await setDoc(
+        userRef, 
+        { 
+          username: userProfile.display_name, // Save the username
+          totalScore: newScore, 
+          quizHistory: newHistory 
+        }, 
+        { merge: true }
+      );
     } catch (error) {
       console.error("Error saving quiz data:", error);
     }
   }
 };
+
 
 
 useEffect(() => {
@@ -119,11 +129,16 @@ useEffect(() => {
       if (userSnap.exists()) {
         setTotalScore(userSnap.data().totalScore || 0);
         setQuizHistory(userSnap.data().quizHistory || []);
+        setUserProfile((prev) => ({
+          ...prev,
+          display_name: userSnap.data().username || prev.display_name, // Load username
+        }));
       }
     }
   };
   fetchUserData();
 }, [userProfile]);
+
 
 
 // Save to localStorage when values change
@@ -277,7 +292,11 @@ useEffect(() => {
           )}
         </div>
       );
-    } else if (mode === "search") {
+    } 
+    else if (mode === "leaderboard") {
+      return <Leaderboard />; // Render Leaderboard
+    }
+    else if (mode === "search") {
       return (
         <div className="search-container">
           <h1>Music Search</h1>

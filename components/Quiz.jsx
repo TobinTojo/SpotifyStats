@@ -299,8 +299,11 @@ const Quiz = ({
               ) : (
                 <>
                   <div className="quiz-progress">
-                    <div className="quiz-progress-bar" style={{ width: `${((currentQuestionIndex + 1) / quizQuestions.length) * 100}%` }}></div>
-                    <span>Question {currentQuestionIndex + 1} of {quizQuestions.length}</span>
+                    <div className="quiz-progress-bar" style={{ width: `${((currentQuestionIndex + 1) / quizQuestions.length) * 100}%` }}>
+                      <span className="quiz-progress-text">
+                        Question {currentQuestionIndex + 1} of {quizQuestions.length}
+                      </span>
+                    </div>
                   </div>
                   <div className="quiz-question">
                     {quizQuestions[currentQuestionIndex].imageUrl && (

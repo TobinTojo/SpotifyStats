@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { FaCrown, FaMedal, FaTrophy, FaChartLine, FaMusic, FaHistory } from "react-icons/fa";
 import { GiRank3, GiRank2, GiRank1 } from "react-icons/gi";
+import { db } from "../firebase";
+import { doc, setDoc, getDoc, collection, getDocs } from "firebase/firestore";
 
 const Profile = ({ userProfile, quizHistory, totalScore, topArtist, topTrack }) => {
   const [showHistory, setShowHistory] = useState(false);
+  const [globalRank, setGlobalRank] = useState(null);
+  const [totalUsers, setTotalUsers] = useState(0);
 
+  console.log(totalScore);
   // Create score distribution data
   const scoreDistribution = Array(11).fill(0).map((_, i) => ({ score: i, count: 0 }));
   quizHistory.forEach(attempt => {
@@ -13,6 +18,37 @@ const Profile = ({ userProfile, quizHistory, totalScore, topArtist, topTrack }) 
     const roundedScore = Math.round(percentage);
     scoreDistribution[roundedScore].count += 1;
   });
+
+  useEffect(() => {
+      const fetchLeaderboard = async () => {
+        try {
+          const usersRef = collection(db, "users");
+          const snapshot = await getDocs(usersRef);
+    
+          const scores = [];
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            if (typeof data.totalScore === "number") {
+              scores.push({ id: doc.id, score: data.totalScore });
+            }
+          });
+    
+          scores.sort((a, b) => b.score - a.score);
+          const rank = scores.findIndex(user => user.id === userProfile?.id) + 1;
+    
+          setGlobalRank(rank > 0 ? rank : null);
+          setTotalUsers(scores.length);
+        } catch (error) {
+          console.error("Error fetching leaderboard:", error);
+        }
+      };
+    
+      if (userProfile) {
+        fetchLeaderboard();
+      }
+    }, [userProfile]);
+    
+  
 
   // Custom Tooltip Content
   const CustomTooltip = ({ active, payload }) => {
@@ -74,6 +110,12 @@ const Profile = ({ userProfile, quizHistory, totalScore, topArtist, topTrack }) 
               {getRankProgress(totalScore).pointsNeeded > 0
                 ? `${getRankProgress(totalScore).pointsNeeded} points to ${getRankProgress(totalScore).nextRank}`
                 : "Max Rank"}
+            </div>
+          </div>
+          <div className="stat-item">
+            <h3><FaMedal /> Global Rank</h3>
+            <div className="stat-value">
+              {globalRank ? `#${globalRank}` : "Loading..."}
             </div>
           </div>
         </div>
