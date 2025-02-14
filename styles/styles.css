@@ -286,15 +286,29 @@ footer:hover {
 }
 
 .quiz-progress {
-  margin-bottom: 20px;
+  position: relative;
+  height: 30px; /* Increase height to accommodate text */
+  background-color: #2a2a2a; /* Background color for the progress bar container */
+  border-radius: 15px; /* Rounded corners */
+  overflow: hidden; /* Ensure the inner bar doesn't overflow */
+  margin-bottom: 30px;
 }
 
 .quiz-progress-bar {
-  height: 5px;
-  background-color: #1db954;
-  border-radius: 5px;
+  height: 100%; /* Make the bar fill the container */
+  background-color: #1db954; /* Progress bar color */
+  border-radius: 15px; /* Rounded corners */
   transition: width 0.3s ease;
-  margin-bottom: 15px;
+  display: flex;
+  align-items: center; /* Center text vertically */
+  padding-left: 10px; /* Add padding to position text */
+}
+
+.quiz-progress-text {
+  color: white; /* Text color */
+  font-size: 14px; /* Adjust font size */
+  font-weight: bold; /* Make text bold */
+  white-space: nowrap; /* Prevent text from wrapping */
 }
 
 .quiz-question {

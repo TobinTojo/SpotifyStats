@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
+import "../styles/leaderboard.css";
 
 const Leaderboard = () => {
   const [users, setUsers] = useState([]);
@@ -14,7 +15,7 @@ const Leaderboard = () => {
       snapshot.forEach((doc) => {
         const data = doc.data();
         if (typeof data.totalScore === "number") {
-            scores.push({ name: data.username || "Unknown", score: data.totalScore });
+          scores.push({ name: data.username || "Unknown", score: data.totalScore });
         }
       });
 
@@ -30,8 +31,14 @@ const Leaderboard = () => {
       <h1>Leaderboard</h1>
       <ul>
         {users.map((user, index) => (
-          <li key={index}>
-            <strong>#{index + 1}</strong> {user.name}: {user.score} points
+          <li key={index} className={index < 3 ? `top-${index + 1}` : ""}>
+            <div className="rank">
+              <strong>#{index + 1}</strong>
+            </div>
+            <div className="user-info">
+              <span className="name">{user.name}</span>
+              <span className="score">{user.score} points</span>
+            </div>
           </li>
         ))}
       </ul>
@@ -40,4 +47,3 @@ const Leaderboard = () => {
 };
 
 export default Leaderboard;
-

@@ -1,0 +1,140 @@
+/* Leaderboard Container */
+.leaderboard-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #d3d3d3;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  /* Leaderboard Heading */
+  .leaderboard-container h1 {
+    text-align: center;
+    font-size: 2.8rem;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+  }
+  
+  .leaderboard-container h1::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: #007bff;
+    margin: 10px auto 0;
+    border-radius: 2px;
+  }
+  
+  /* Leaderboard List */
+  .leaderboard-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Leaderboard List Items */
+  .leaderboard-container li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin: 15px 0;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e0e0e0;
+  }
+  
+  .leaderboard-container li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Rank (e.g., #1, #2) */
+  .leaderboard-container li .rank {
+    font-size: 1.4rem;
+    color: #555;
+    margin-right: 20px;
+    font-weight: 600;
+  }
+  
+  /* User Info */
+  .leaderboard-container li .user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-grow: 1;
+  }
+  
+  /* User Name */
+  .leaderboard-container li .name {
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: 500;
+  }
+  
+  /* User Score */
+  .leaderboard-container li .score {
+    font-size: 1.2rem;
+    color: #007bff;
+    font-weight: 700;
+  }
+  
+  /* Top 3 Ranking Highlight */
+  .leaderboard-container li.top-1 {
+    background-color: #fff3e0;
+    border-color: #ffc107;
+  }
+  
+  .leaderboard-container li.top-2 {
+    background-color: #e3f2fd;
+    border-color: #64b5f6;
+  }
+  
+  .leaderboard-container li.top-3 {
+    background-color: #fce4ec;
+    border-color: #ec407a;
+  }
+  
+  .leaderboard-container li.top-1 .rank {
+    color: #ffc107;
+  }
+  
+  .leaderboard-container li.top-2 .rank {
+    color: #64b5f6;
+  }
+  
+  .leaderboard-container li.top-3 .rank {
+    color: #ec407a;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .leaderboard-container {
+      padding: 20px;
+    }
+  
+    .leaderboard-container h1 {
+      font-size: 2.2rem;
+    }
+  
+    .leaderboard-container li {
+      padding: 15px;
+    }
+  
+    .leaderboard-container li .rank {
+      font-size: 1.2rem;
+    }
+  
+    .leaderboard-container li .name,
+    .leaderboard-container li .score {
+      font-size: 1rem;
+    }
+  }
