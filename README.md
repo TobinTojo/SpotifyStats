@@ -1,19 +1,78 @@
-# Getting Started
-Install the dependencies and run the project
-```
-npm install
-npm start
-```
+---
 
-Head over to https://vitejs.dev/ to learn more about configuring vite
-## About Scrimba
+# **Statifly** 🎵  
 
-At Scrimba our goal is to create the best possible coding school at the cost of a gym membership! 💜
-If we succeed with this, it will give anyone who wants to become a software developer a realistic shot at succeeding, regardless of where they live and the size of their wallets 🎉
-The Frontend Developer Career Path aims to teach you everything you need to become a Junior Developer, or you could take a deep-dive with one of our advanced courses 🚀
+Inspired by the popular music analytics trend, **SpotStat** is a comprehensive tool for **Spotify users** to explore their listening habits, discover their top artists and tracks, and challenge themselves with a **fun music quiz**.
 
-- [Our courses](https://scrimba.com/allcourses)
-- [The Frontend Career Path](https://scrimba.com/learn/frontend)
-- [Become a Scrimba Pro member](https://scrimba.com/pricing)
+---
 
-Happy Coding!
+## 🚀 **How To Use**  
+
+1. **Clone the Repository**  
+   ```bash
+   git clone https://github.com/TobinTojo/SpotifyStats.git
+   cd SpotifyStats
+   ```
+2. **Install Dependencies**  
+   ```bash
+   npm install
+   ```
+3. **Run the Application**  
+   ```bash
+   npm start
+   ```
+
+---
+
+## 🌐 **Preview**  
+The project is hosted on **Netlify**: [SpotStat Live Preview](https://mystatify.netlify.app/)  
+
+---
+
+## 🎵 **Features**  
+
+✅ **Top Stats** – View your **top artists** and **top tracks** over **4 weeks, 6 months, or 1 year**.  
+✅ **Search Functionality** – Find specific **artists or tracks** and check their ranking in your listening history.  
+✅ **Interactive Charts** – Visualize stats with **bar charts and pie charts**.  
+✅ **Quiz Mode** – Test your **music knowledge** based on your top tracks and artists.  
+✅ **Leaderboard** – Compare **quiz scores and music stats** with friends.  
+✅ **Profile Page** – View **personalized stats, quiz history, and total scores**.  
+
+---
+
+## 🛠 **Technologies Used**  
+
+- **React** – Frontend framework for UI and state management.  
+- **Spotify API** – Fetches user data (top tracks, artists, etc.).  
+- **Firebase** – Stores quiz data and leaderboard information.  
+- **Google Generative AI** – Enhances the quiz with AI-generated questions.  
+- **Chart.js** – Renders **interactive visualizations** of user stats.  
+- **Netlify** – Deploys the application online.  
+
+---
+
+## 📂 **Code Overview**  
+
+The app is built using **React** and **Spotify API**, with the following key components:  
+
+### 📌 **Main Components**  
+
+- **Navbar** – Handles navigation between different sections.  
+- **Login** – Manages Spotify authentication and token handling.  
+- **InteractionForm** – Lets users select the type of stats (**tracks or artists**) and the time range.  
+- **TracksList & ArtistsList** – Display lists of top tracks or artists based on user selection.  
+- **Quiz** – A fun quiz feature based on **user listening history**.  
+- **Leaderboard** – Displays rankings based on **quiz scores**.  
+- **Profile** – Shows **user-specific data, quiz history, total score, and top stats**.  
+
+---
+
+## 👤 **Author**  
+👨‍💻 **Tobin Tojo**  
+📌 **GitHub**: [TobinTojo](https://github.com/TobinTojo)  
+
+Feel free to **fork, contribute, or provide feedback**! 🚀🎶  
+
+---
+
+This README is **clean, structured, and professional**, making it **easy for users and contributors** to understand your project. Let me know if you'd like any tweaks! 🚀
