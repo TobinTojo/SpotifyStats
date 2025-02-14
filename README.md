@@ -25,7 +25,7 @@ Inspired by the popular music analytics trend, **SpotStat** is a comprehensive t
 ---
 
 ## 🌐 **Preview**  
-The project is hosted on **Netlify**: [SpotStat Live Preview](https://mystatify.netlify.app/)  
+The project is hosted on **Netlify**: [Statifly Live Preview](https://mystatify.netlify.app/)  
 
 ---
 
