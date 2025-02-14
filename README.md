@@ -74,5 +74,3 @@ The app is built using **React** and **Spotify API**, with the following key com
 Feel free to **fork, contribute, or provide feedback**! 🚀🎶  
 
 ---
-
-This README is **clean, structured, and professional**, making it **easy for users and contributors** to understand your project. Let me know if you'd like any tweaks! 🚀
