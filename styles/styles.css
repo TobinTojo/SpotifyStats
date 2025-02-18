@@ -95,22 +95,34 @@ a {
 }
 
 /* Footer Styling */
+/* Footer Styling */
 footer {
-    background-color:transparent !important; /* Spotify dark background */
-    color: #B3B3B3; /* Light gray text color */
-    padding: 20px;
-    font-size: 16px;
-    text-align: center;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-    box-sizing: border-box; /* Ensure padding is included in the total width */
+  background-color: transparent !important; /* Spotify dark background */
+  color: #B3B3B3; /* Light gray text color */
+  padding: 20px;
+  font-size: 16px;
+  text-align: center;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box; /* Ensure padding is included in the total width */
 }
 
 /* Hover effect for footer text */
 footer:hover {
-    color: #1DB954; /* Spotify green text on hover */
-    cursor: pointer; /* Indicate it's interactive */
+  color: #1DB954; /* Spotify green text on hover */
+  cursor: pointer; /* Indicate it's interactive */
+}
+
+/* Privacy Policy Link Styling */
+footer a {
+  color: #B3B3B3;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  color: #1DB954; /* Spotify green text on hover */
 }
 
 #interaction-container form {

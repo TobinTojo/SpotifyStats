@@ -126,14 +126,35 @@ const Profile = ({ userProfile, quizHistory, totalScore, topArtist, topTrack }) 
           <div className="musician-grid">
             <div className="musician-item">
               <h4>Last 4 Weeks</h4>
+              {topArtist?.last4Weeks?.images?.[0]?.url && (
+                <img
+                  src={topArtist.last4Weeks.images[0].url}
+                  alt={topArtist.last4Weeks.name}
+                  className="profile-artist-image"
+                />
+              )}
               <div className="stat-value">{topArtist?.last4Weeks?.name || "N/A"}</div>
             </div>
             <div className="musician-item">
               <h4>Last 6 Months</h4>
+              {topArtist?.last6Months?.images?.[0]?.url && (
+                <img
+                  src={topArtist.last6Months.images[0].url}
+                  alt={topArtist.last6Months.name}
+                  className="profile-artist-image"
+                />
+              )}
               <div className="stat-value">{topArtist?.last6Months?.name || "N/A"}</div>
             </div>
             <div className="musician-item">
               <h4>Last Year</h4>
+              {topArtist?.lastYear?.images?.[0]?.url && (
+                <img
+                  src={topArtist.lastYear.images[0].url}
+                  alt={topArtist.lastYear.name}
+                  className="profile-artist-image"
+                />
+              )}
               <div className="stat-value">{topArtist?.lastYear?.name || "N/A"}</div>
             </div>
           </div>
@@ -145,14 +166,35 @@ const Profile = ({ userProfile, quizHistory, totalScore, topArtist, topTrack }) 
           <div className="song-grid">
             <div className="song-item">
               <h4>Last 4 Weeks</h4>
+              {topTrack?.last4Weeks?.album?.images?.[0]?.url && (
+                <img
+                  src={topTrack.last4Weeks.album.images[0].url}
+                  alt={topTrack.last4Weeks.name}
+                  className="profile-track-image"
+                />
+              )}
               <div className="stat-value">{topTrack?.last4Weeks?.name || "N/A"}</div>
             </div>
             <div className="song-item">
               <h4>Last 6 Months</h4>
+              {topTrack?.last6Months?.album?.images?.[0]?.url && (
+                <img
+                  src={topTrack.last6Months.album.images[0].url}
+                  alt={topTrack.last6Months.name}
+                  className="profile-track-image"
+                />
+              )}
               <div className="stat-value">{topTrack?.last6Months?.name || "N/A"}</div>
             </div>
             <div className="song-item">
               <h4>Last Year</h4>
+              {topTrack?.lastYear?.album?.images?.[0]?.url && (
+                <img
+                  src={topTrack.lastYear.album.images[0].url}
+                  alt={topTrack.lastYear.name}
+                  className="profile-track-image"
+                />
+              )}
               <div className="stat-value">{topTrack?.lastYear?.name || "N/A"}</div>
             </div>
           </div>

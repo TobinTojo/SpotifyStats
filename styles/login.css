@@ -227,6 +227,58 @@ html {
     outline: none;
 }
 
+/* Disclaimer Popup Styles */
+.disclaimer-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.disclaimer-content {
+  background: #191414;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.disclaimer-content h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.disclaimer-content p {
+  font-size: 1rem;
+  color: #b3b3b3;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.disclaimer-content button {
+  background: #1DB954;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.disclaimer-content button:hover {
+  background: #1ed760;
+}
+
 /* Media Query for Screens 600px or Less */
 @media (max-width: 600px) {
     .feature-cards {

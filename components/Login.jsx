@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { 
   FaChevronRight,
   FaQuoteLeft,
@@ -10,8 +10,10 @@ import {
 } from "react-icons/fa";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import '../styles/login.css'; // Ensure your CSS is imported
 
 const Login = () => {
+  const [showDisclaimer, setShowDisclaimer] = useState(true);
   const clientId = import.meta.env.VITE_SPOTIFY_API_KEY;
   const redirectUri = "http://localhost:5173";
   const scopes = [
@@ -30,17 +32,36 @@ const Login = () => {
     AOS.init({
       duration: 800,
       once: true,
-      offset: 200, // Increased offset for earlier trigger
+      offset: 200,
       easing: 'ease-out-quad',
       mirror: false
     });
-    // Refresh AOS after initial render to catch dynamic elements
     setTimeout(() => AOS.refresh(), 1000);
   }, []);
 
+  const handleCloseDisclaimer = () => {
+    setShowDisclaimer(false);
+  };
+
   return (
     <div id="login-container">
-      {/* Hero Section */}
+      {/* Disclaimer Popup */}
+      {showDisclaimer && (
+        <div className="disclaimer-popup">
+          <div className="disclaimer-content">
+            <h2>Beta Disclaimer</h2>
+            <p>
+              This project is currently in <strong>Beta</strong>. To join the beta, please reach out to <strong>Tobin Tojo</strong>.
+            </p>
+            <p>
+              A <strong>Spotify Premium account</strong> is required to use this site as intended.
+            </p>
+            <button onClick={handleCloseDisclaimer}>I Understand</button>
+          </div>
+        </div>
+      )}
+
+      {/* Rest of your existing code */}
       <div className="hero-section">
         <div className="hero-content">
           <div className="spotify-logo-3d">
@@ -83,8 +104,8 @@ const Login = () => {
             className="feature-card" 
             key={feature.title}
             data-aos="fade-up"
-            data-aos-delay={index * 100} // Adding delay for staggered animations
-            data-aos-offset="150" // Offset to trigger animation earlier
+            data-aos-delay={index * 100}
+            data-aos-offset="150"
           >
             <div className="feature-icon">{feature.icon}</div>
             <h3>{feature.title}</h3>
@@ -93,7 +114,7 @@ const Login = () => {
         ))}
       </div>
 
-      {/* Updated About Section */}
+      {/* About Section */}
       <div 
         className="about-section"
         data-aos="fade-up"

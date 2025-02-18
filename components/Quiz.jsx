@@ -132,7 +132,7 @@ const Quiz = ({
           const correctRange = getRankRange(track.rank);
           questions.push({
             type: "trackRank",
-            question: `In the last ${label}, where does the song <strong style="color: #27adf5;">${track.name}</strong> place?`,
+            question: `In the last <strong style="color:rgb(150, 177, 204);">${label}</strong>, where does the song <strong style="color: #27adf5;">${track.name}</strong> place?`,
             correctAnswer: correctRange,
             options: generateOptions(correctRange),
             imageUrl: track.album.images[0]?.url, // Add image URL for the track
@@ -147,7 +147,7 @@ const Quiz = ({
           const correctRange = getRankRange(artist.rank);
           questions.push({
             type: "artistRank",
-            question: `In the last ${label}, where does the artist <strong style="color: #27adf5;">${artist.name}</strong> place?`,
+            question: `In the last  <strong style="color:rgb(150, 177, 204);">${label}</strong>, where does the artist <strong style="color: #27adf5;">${artist.name}</strong> place?`,
             correctAnswer: correctRange,
             options: generateOptions(correctRange),
             imageUrl: artist.images[0]?.url, // Add image URL for the artist

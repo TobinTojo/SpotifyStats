@@ -151,7 +151,7 @@
     background-color: #1f8fd4;
 }
 
-@keyframes pulse {
+@keyframes profilepulse {
     0% {
         transform: scale(1);
     }
@@ -164,7 +164,7 @@
 }
 
 .show-history-button {
-    animation: pulse 2s infinite;
+    animation: profilepulse 2s infinite;
 }
 
 .quiz-history {
@@ -277,6 +277,44 @@
 .custom-tooltip {
     padding: 6px 12px;
 }
+
+/* Artist and Track Images */
+.profile-artist-image,
+.profile-track-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 3px solid #27adf5;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-artist-image:hover,
+.profile-track-image:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(39, 173, 245, 0.6);
+}
+
+.musician-item,
+.song-item {
+    text-align: center;
+}
+
+.musician-item h4,
+.song-item h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    color: #888;
+}
+
+.musician-item .stat-value,
+.song-item .stat-value {
+    font-size: 1.2rem;
+    color: #fff;
+    font-weight: 600;
+}
+
 /* Media Query for Responsiveness (for screens 600px and below) */
 @media (max-width: 600px) {
     .profile-container {
