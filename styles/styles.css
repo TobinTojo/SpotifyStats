@@ -530,6 +530,29 @@ footer a:hover {
 }
 
 
+.form-loading-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}
+
+.form-loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #09f;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: formspin 1s linear infinite;
+}
+
+@keyframes formspin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
 /* Mobile responsiveness */
 @media (max-width: 600px) {
     #statstop-btn, #statsearch-btn, #statsquiz-btn {

@@ -309,30 +309,32 @@ useEffect(() => {
       setData([]); // Clear data when switching modes
     };
 
-  const handleSearch = async (query) => {
-    if (!query) return;
-  
-    // Capture the current searchType when the request is made
-    const currentSearchType = searchType;
-  
-    try {
-      const response = await fetch(
-        `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=${currentSearchType}&limit=10`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-      const data = await response.json();
-      // Safely access items with optional chaining and default to empty array
-      const items = currentSearchType === "artist" 
-        ? data.artists?.items || [] 
-        : data.tracks?.items || [];
-      setData(items);
-    } catch (error) {
-      console.error("Failed to search:", error);
-      setData([]); // Reset data on error
-    }
-  };
+    const handleSearch = async (query) => {
+      if (!query) return;
+      setIsLoading(true); // Start loading
+      // Capture the current searchType when the request is made
+      const currentSearchType = searchType;
+    
+      try {
+        const response = await fetch(
+          `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=${currentSearchType}&limit=10`,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        );
+        const data = await response.json();
+        // Safely access items with optional chaining and default to empty array
+        const items = currentSearchType === "artist" 
+          ? data.artists?.items || [] 
+          : data.tracks?.items || [];
+        setData(items);
+      } catch (error) {
+        console.error("Failed to search:", error);
+        setData([]); // Reset data on error
+      } finally {
+        setIsLoading(false); // Stop loading
+      }
+    };
 
   const renderContent = () => {
     if (mode === "topStats") {
@@ -347,20 +349,28 @@ useEffect(() => {
             setTrackLimit={setTrackLimit}
             onSubmit={handleSubmit}
           />
-          {statType === "tracks" ? (
-            <TracksList 
-              tracks={data} 
-              onTrackClick={handleTrackClick} 
-              isSearchMode={false}
-              offset={offset} // Pass the offset
-            />
+          {isLoading ? (
+            <div className="form-loading-spinner-container">
+              <div className="form-loading-spinner"></div>
+            </div>
           ) : (
-            <ArtistsList
-              artists={data}
-              onArtistClick={handleArtistClick}
-              isSearchMode={false}
-              offset={offset} // Pass the offset
-            />
+            <>
+              {statType === "tracks" ? (
+                <TracksList 
+                  tracks={data} 
+                  onTrackClick={handleTrackClick} 
+                  isSearchMode={false}
+                  offset={offset} // Pass the offset
+                />
+              ) : (
+                <ArtistsList
+                  artists={data}
+                  onArtistClick={handleArtistClick}
+                  isSearchMode={false}
+                  offset={offset} // Pass the offset
+                />
+              )}
+            </>
           )}
         </div>
       );
@@ -400,18 +410,26 @@ useEffect(() => {
               </div>
             </div>
           </form>
-          {searchType === "artist" ? (
-            <ArtistsList
-              artists={data}
-              onArtistClick={handleArtistClick}
-              isSearchMode={true}
-            />
+          {isLoading ? (
+            <div className="form-loading-spinner-container">
+              <div className="form-loading-spinner"></div>
+            </div>
           ) : (
-            <TracksList 
-              tracks={data} 
-              onTrackClick={handleTrackClick} 
-              isSearchMode={true}
-            />
+            <>
+              {searchType === "artist" ? (
+                <ArtistsList
+                  artists={data}
+                  onArtistClick={handleArtistClick}
+                  isSearchMode={true}
+                />
+              ) : (
+                <TracksList 
+                  tracks={data} 
+                  onTrackClick={handleTrackClick} 
+                  isSearchMode={true}
+                />
+              )}
+            </>
           )}
         </div>
       );
@@ -608,11 +626,12 @@ const getAvailableTimeRanges = () => {
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true); // Start loading
     try {
       const endpoint = statType === "tracks" ? "me/top/tracks" : "me/top/artists";
       const limit = 20; // Always fetch 20 tracks/artists per request
       const selectedRange = trackLimit; // This will be "20", "40", "60", "80", or "100"
-
+  
       // Calculate the offset based on the selected range
       let newOffset = 0;
       switch (selectedRange) {
@@ -634,15 +653,15 @@ const getAvailableTimeRanges = () => {
         default:
           newOffset = 0; // Default to 1-20
       }
-
+  
       setOffset(newOffset); // Update the offset state
-
+  
       const url = `https://api.spotify.com/v1/${endpoint}?${new URLSearchParams({
         time_range: timeRange,
         limit: limit,
         offset: newOffset,
       })}`;
-
+  
       const response = await fetch(url, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
@@ -650,6 +669,8 @@ const getAvailableTimeRanges = () => {
       setData(result.items); // Set the fetched tracks/artists
     } catch (error) {
       console.error("Failed to fetch data:", error);
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
 

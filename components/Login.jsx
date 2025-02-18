@@ -15,7 +15,7 @@ import '../styles/login.css'; // Ensure your CSS is imported
 const Login = () => {
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   const clientId = import.meta.env.VITE_SPOTIFY_API_KEY;
-  const redirectUri = "http://localhost:5173";
+  const redirectUri = "https://statifly.netlify.app";
   const scopes = [
     "user-read-private",
     "user-read-email",
