@@ -23,6 +23,7 @@ import {
 } from "react-icons/fa";
 import { db } from "./firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
+import PrivacyPolicyPopup from "./components/PrivacyPolicyPopup";
 
 const App = () => {
   const [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken") || null);
@@ -70,7 +71,8 @@ const [trackSpotifyLink, setTrackSpotifyLink] = useState(null);
 
 const [searchType, setSearchType] = useState("artist"); // Add this with other state declarations
 
-const genAI = new GoogleGenerativeAI('AIzaSyBKTyvCaSFo-OdMvWAJ7JOx4nt0Bb5Kn-M');
+const genAIKey = import.meta.env.VITE_GOOGLE_GEMINI_KEY;
+const genAI = new GoogleGenerativeAI(genAIKey);
 const [cooldownMessage, setCooldownMessage] = useState("");
 
 const DEBUG_DISABLE_COOLDOWN = true; // Set to false to enable 12 AM cooldown
@@ -92,6 +94,8 @@ const [topTrack, setTopTrack] = useState({
 }); // State for top track
 
 const [offset, setOffset] = useState(0); // Add this state
+
+const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
 
 
 const handleQuizComplete = async (result) => {
@@ -946,7 +950,8 @@ const closePopup = () => {
           {renderContent()}
         </div>
       )}
-      <Footer />
+      <Footer onPrivacyPolicyClick={() => setShowPrivacyPolicy(true)} />
+      {showPrivacyPolicy && <PrivacyPolicyPopup onClose={() => setShowPrivacyPolicy(false)} />}
 
 
       {selectedTrack && (

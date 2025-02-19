@@ -108,17 +108,16 @@ footer {
   box-sizing: border-box; /* Ensure padding is included in the total width */
 }
 
-/* Hover effect for footer text */
-footer:hover {
-  color: #1DB954; /* Spotify green text on hover */
-  cursor: pointer; /* Indicate it's interactive */
-}
 
 /* Privacy Policy Link Styling */
 footer a {
   color: #B3B3B3;
   text-decoration: none;
   transition: color 0.3s ease;
+}
+
+#policy-link:hover {
+  color: #1DB954 !important;
 }
 
 footer a:hover {

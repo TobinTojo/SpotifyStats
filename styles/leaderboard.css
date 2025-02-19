@@ -172,19 +172,53 @@
 /* Close Button */
 .leaderboard-close-popup {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
   border: none;
-  font-size: 1.5rem;
+  background: none;
   cursor: pointer;
-  color: #888;
-  transition: color 0.3s ease;
+  padding: 0;
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.leaderboard-close-popup::before,
+.leaderboard-close-popup::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 2px;
+  background: #b3b3b3;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.leaderboard-close-popup::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.leaderboard-close-popup::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.leaderboard-close-popup:hover::before,
+.leaderboard-close-popup:hover::after {
+  background: #fff;
+  width: 28px;
 }
 
 .leaderboard-close-popup:hover {
-  color: #fff;
+  transform: rotate(90deg) scale(1.1);
 }
+
+.leaderboard-close-popup:active {
+  transform: rotate(90deg) scale(0.9);
+}
+
 
 /* Profile Avatar */
 .leaderboard-profile-avatar {
@@ -538,4 +572,10 @@
     .leaderboard-container li .score {
       font-size: 1rem;
     }
+
+    .leaderboard-top-artists-grid, .leaderboard-top-tracks-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1.5rem;
+  }
   }
