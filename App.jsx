@@ -105,93 +105,14 @@ const handleQuizComplete = async (result) => {
   setTotalScore(newScore);
   setQuizHistory(newHistory);
 
-  if (userProfile) {
-    const userRef = doc(db, "users", userProfile.id);
-    try {
-      // Prepare the artist data for Firestore
-      const artistData = {
-        last4Weeks: topArtist.last4Weeks ? {
-          id: topArtist.last4Weeks.id,
-          name: topArtist.last4Weeks.name,
-          image: topArtist.last4Weeks.images?.[0]?.url || null,
-          spotifyUrl: topArtist.last4Weeks.external_urls?.spotify || null,
-        } : null,
-        last6Months: topArtist.last6Months ? {
-          id: topArtist.last6Months.id,
-          name: topArtist.last6Months.name,
-          image: topArtist.last6Months.images?.[0]?.url || null,
-          spotifyUrl: topArtist.last6Months.external_urls?.spotify || null,
-        } : null,
-        lastYear: topArtist.lastYear ? {
-          id: topArtist.lastYear.id,
-          name: topArtist.lastYear.name,
-          image: topArtist.lastYear.images?.[0]?.url || null,
-          spotifyUrl: topArtist.lastYear.external_urls?.spotify || null,
-        } : null,
-      };
-
-      // Prepare the track data for Firestore
-      const trackData = {
-        last4Weeks: topTrack.last4Weeks ? {
-          id: topTrack.last4Weeks.id,
-          name: topTrack.last4Weeks.name,
-          artists: topTrack.last4Weeks.artists.map(artist => ({
-            id: artist.id,
-            name: artist.name,
-          })),
-          album: {
-            id: topTrack.last4Weeks.album.id,
-            name: topTrack.last4Weeks.album.name,
-            image: topTrack.last4Weeks.album.images?.[0]?.url || null,
-          },
-          spotifyUrl: topTrack.last4Weeks.external_urls?.spotify || null,
-        } : null,
-        last6Months: topTrack.last6Months ? {
-          id: topTrack.last6Months.id,
-          name: topTrack.last6Months.name,
-          artists: topTrack.last6Months.artists.map(artist => ({
-            id: artist.id,
-            name: artist.name,
-          })),
-          album: {
-            id: topTrack.last6Months.album.id,
-            name: topTrack.last6Months.album.name,
-            image: topTrack.last6Months.album.images?.[0]?.url || null,
-          },
-          spotifyUrl: topTrack.last6Months.external_urls?.spotify || null,
-        } : null,
-        lastYear: topTrack.lastYear ? {
-          id: topTrack.lastYear.id,
-          name: topTrack.lastYear.name,
-          artists: topTrack.lastYear.artists.map(artist => ({
-            id: artist.id,
-            name: artist.name,
-          })),
-          album: {
-            id: topTrack.lastYear.album.id,
-            name: topTrack.lastYear.album.name,
-            image: topTrack.lastYear.album.images?.[0]?.url || null,
-          },
-          spotifyUrl: topTrack.lastYear.external_urls?.spotify || null,
-        } : null,
-      };
-
-      await setDoc(
-        userRef, 
-        { 
-          username: userProfile.display_name,
-          spotifyImage: userProfile.images?.[0]?.url || null,
-          totalScore: newScore, 
-          quizHistory: newHistory,
-          topArtist: artistData,
-          topTrack: trackData,
-        }, 
-        { merge: true }
-      );
-    } catch (error) {
-      console.error("Error saving quiz data:", error);
-    }
-  }
+  // Save updated data to Firebase
+  await saveUserDataToFirebase(
+    userProfile,
+    newScore,
+    newHistory,
+    topArtist,
+    topTrack
+  );
 };
 
 
@@ -206,8 +127,8 @@ useEffect(() => {
         setQuizHistory(userSnap.data().quizHistory || []);
         setUserProfile((prev) => ({
           ...prev,
-          display_name: userSnap.data().username || prev.display_name, // Load username
-          images: userSnap.data().spotifyImage ? [{ url: userSnap.data().spotifyImage }] : prev.images, // Load Spotify image
+          display_name: userSnap.data().username || prev.display_name,
+          images: userSnap.data().spotifyImage ? [{ url: userSnap.data().spotifyImage }] : prev.images,
         }));
       }
     }
@@ -567,6 +488,98 @@ const getAvailableTimeRanges = () => {
     }
   }, []);
 
+
+  const saveUserDataToFirebase = async (userProfile, totalScore, quizHistory, topArtist, topTrack) => {
+    if (userProfile) {
+      const userRef = doc(db, "users", userProfile.id);
+      try {
+        // Prepare the artist data for Firestore
+        const artistData = {
+          last4Weeks: topArtist.last4Weeks ? {
+            id: topArtist.last4Weeks.id,
+            name: topArtist.last4Weeks.name,
+            image: topArtist.last4Weeks.images?.[0]?.url || null,
+            spotifyUrl: topArtist.last4Weeks.external_urls?.spotify || null,
+          } : null,
+          last6Months: topArtist.last6Months ? {
+            id: topArtist.last6Months.id,
+            name: topArtist.last6Months.name,
+            image: topArtist.last6Months.images?.[0]?.url || null,
+            spotifyUrl: topArtist.last6Months.external_urls?.spotify || null,
+          } : null,
+          lastYear: topArtist.lastYear ? {
+            id: topArtist.lastYear.id,
+            name: topArtist.lastYear.name,
+            image: topArtist.lastYear.images?.[0]?.url || null,
+            spotifyUrl: topArtist.lastYear.external_urls?.spotify || null,
+          } : null,
+        };
+  
+        // Prepare the track data for Firestore
+        const trackData = {
+          last4Weeks: topTrack.last4Weeks ? {
+            id: topTrack.last4Weeks.id,
+            name: topTrack.last4Weeks.name,
+            artists: topTrack.last4Weeks.artists.map(artist => ({
+              id: artist.id,
+              name: artist.name,
+            })),
+            album: {
+              id: topTrack.last4Weeks.album.id,
+              name: topTrack.last4Weeks.album.name,
+              image: topTrack.last4Weeks.album.images?.[0]?.url || null,
+            },
+            spotifyUrl: topTrack.last4Weeks.external_urls?.spotify || null,
+          } : null,
+          last6Months: topTrack.last6Months ? {
+            id: topTrack.last6Months.id,
+            name: topTrack.last6Months.name,
+            artists: topTrack.last6Months.artists.map(artist => ({
+              id: artist.id,
+              name: artist.name,
+            })),
+            album: {
+              id: topTrack.last6Months.album.id,
+              name: topTrack.last6Months.album.name,
+              image: topTrack.last6Months.album.images?.[0]?.url || null,
+            },
+            spotifyUrl: topTrack.last6Months.external_urls?.spotify || null,
+          } : null,
+          lastYear: topTrack.lastYear ? {
+            id: topTrack.lastYear.id,
+            name: topTrack.lastYear.name,
+            artists: topTrack.lastYear.artists.map(artist => ({
+              id: artist.id,
+              name: artist.name,
+            })),
+            album: {
+              id: topTrack.lastYear.album.id,
+              name: topTrack.lastYear.album.name,
+              image: topTrack.lastYear.album.images?.[0]?.url || null,
+            },
+            spotifyUrl: topTrack.lastYear.external_urls?.spotify || null,
+          } : null,
+        };
+  
+        // Save the data to Firestore
+        await setDoc(
+          userRef,
+          {
+            username: userProfile.display_name,
+            spotifyImage: userProfile.images?.[0]?.url || null,
+            totalScore: totalScore,
+            quizHistory: quizHistory,
+            topArtist: artistData,
+            topTrack: trackData,
+          },
+          { merge: true }
+        );
+      } catch (error) {
+        console.error("Error saving user data to Firebase:", error);
+      }
+    }
+  };
+
   const fetchUserProfile = async (token) => {
     try {
       const response = await fetch("https://api.spotify.com/v1/me", {
@@ -574,6 +587,49 @@ const getAvailableTimeRanges = () => {
       });
       const profile = await response.json();
       setUserProfile(profile);
+  
+      // Fetch top artist and track data
+      const [last4WeeksArtist, last6MonthsArtist, lastYearArtist] = await Promise.all([
+        fetchTopArtists("short_term", 0),
+        fetchTopArtists("medium_term", 0),
+        fetchTopArtists("long_term", 0),
+      ]);
+  
+      const [last4WeeksTrack, last6MonthsTrack, lastYearTrack] = await Promise.all([
+        fetchTopTracks(0, "short_term"),
+        fetchTopTracks(0, "medium_term"),
+        fetchTopTracks(0, "long_term"),
+      ]);
+  
+      // Set top artist and track states
+      setTopArtist({
+        last4Weeks: last4WeeksArtist[0] || null,
+        last6Months: last6MonthsArtist[0] || null,
+        lastYear: lastYearArtist[0] || null,
+      });
+  
+      setTopTrack({
+        last4Weeks: last4WeeksTrack[0] || null,
+        last6Months: last6MonthsTrack[0] || null,
+        lastYear: lastYearTrack[0] || null,
+      });
+  
+      // Save user data to Firebase
+      await saveUserDataToFirebase(
+        profile,
+        totalScore,
+        quizHistory,
+        {
+          last4Weeks: last4WeeksArtist[0] || null,
+          last6Months: last6MonthsArtist[0] || null,
+          lastYear: lastYearArtist[0] || null,
+        },
+        {
+          last4Weeks: last4WeeksTrack[0] || null,
+          last6Months: last6MonthsTrack[0] || null,
+          lastYear: lastYearTrack[0] || null,
+        }
+      );
     } catch (error) {
       console.error("Failed to fetch user profile:", error);
     }
