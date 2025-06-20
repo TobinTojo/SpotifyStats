@@ -31,8 +31,8 @@ Inspired by the popular music analytics trend, **SpotStat** is a comprehensive t
 
 ## 🌐 **Preview**
 
-The project is hosted on **Netlify**: [Statifly Live Preview](https://statifly.netlify.app/)
-🎥 Watch a demo video here: [YouTube Demo](https://youtu.be/Qm2j0EmXYoo)
+* The project is hosted on **Netlify**: [Statifly Live Preview](https://statifly.netlify.app/)
+* 🎥 Watch a demo video here: [YouTube Demo](https://youtu.be/Qm2j0EmXYoo)
 
 ---
 
